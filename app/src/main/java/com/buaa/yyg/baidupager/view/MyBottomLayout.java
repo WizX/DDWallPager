@@ -134,7 +134,7 @@ public class MyBottomLayout extends LinearLayout implements View.OnClickListener
         iCallbackListener.click(v.getId());
     }
 
-    private void setResidAndColor(int i) {
+    public void setResidAndColor(int i) {
         switch (i) {
             case 0:
                 changeDataItem(new int[] {

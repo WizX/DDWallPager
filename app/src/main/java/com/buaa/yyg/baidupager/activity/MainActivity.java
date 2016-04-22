@@ -33,12 +33,10 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void initView() {
-
     }
 
     @Override
     public void initData() {
-        //        initPagerContent(new HomeFragment());
         myViewPager.setAdapter(new MyFragmentAdapter(getSupportFragmentManager()));
     }
 
@@ -50,17 +48,19 @@ public class MainActivity extends BaseActivity {
         myViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
 
             @Override
             public void onPageSelected(int position) {
-
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
+                //0是禁止，1是正在滑动，2是停止滑动
+                if (state == 2) {
+                    //设置滑动ViewPager导航同步变化
+                    myBottomLayout.setResidAndColor(myViewPager.getCurrentItem());
+                }
             }
         });
     }
@@ -74,23 +74,18 @@ public class MainActivity extends BaseActivity {
         public void click(int id) {
             switch (id) {
                 case R.id.homeLayout:
-                    //                    initPagerContent(new HomeFragment());
                     myViewPager.setCurrentItem(0);
                     break;
                 case R.id.chosenLayout:
-                    //                    initPagerContent(new ChosenFragment());
                     myViewPager.setCurrentItem(1);
                     break;
                 case R.id.searchLayout:
-                    //                    initPagerContent(new SearchFragment());
                     myViewPager.setCurrentItem(2);
                     break;
                 case R.id.localLayout:
-                    //                    initPagerContent(new LocalFragment());
                     myViewPager.setCurrentItem(3);
                     break;
                 case R.id.settingLayout:
-                    //                    initPagerContent(new SettingFragment());
                     myViewPager.setCurrentItem(4);
                     break;
             }
@@ -133,15 +128,5 @@ public class MainActivity extends BaseActivity {
     @Override
     public void progress() {
     }
-
-    //    /**
-    //     * 可通过replace替换之前的Fragment，不过这里用的是回调方法，就不用这个了
-    //     */
-    //    private void initPagerContent(android.app.Fragment fragment) {
-    //        FragmentManager manager = getFragmentManager();
-    //        android.app.FragmentTransaction ft = manager.beginTransaction();
-    //        ft.replace(R.id.myContent,fragment);
-    //        ft.commit();
-    //    }
 
 }
