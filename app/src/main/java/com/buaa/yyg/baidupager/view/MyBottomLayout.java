@@ -131,6 +131,9 @@ public class MyBottomLayout extends LinearLayout implements View.OnClickListener
                 setResidAndColor(4);
                 break;
         }
+
+        //这里加入了一个接口方法，留给ViewPager去实现
+        //功能是点击item后viewPager也会跟着变
         iCallbackListener.click(v.getId());
     }
 
@@ -194,14 +197,13 @@ public class MyBottomLayout extends LinearLayout implements View.OnClickListener
         }
     }
 
+    //初始化接口，由需要实现activity（MainActivity）调用
+    //通过findviewbyid获取MyBottomLayout，进行调用
     public void setOnCallbackListener(ICallbackListener iCallbackListener) {
         this.iCallbackListener = iCallbackListener;
     }
-
+    //自定义接口文件，click方法由调用处实现，功能是完成viewpager的滑动
     public interface ICallbackListener {
         public void click(int id);
     }
-
-
-
 }

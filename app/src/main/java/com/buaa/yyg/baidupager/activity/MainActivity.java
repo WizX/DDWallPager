@@ -28,6 +28,9 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        //super必须在最后，这样先setContentView然后super到
+        //BaseActivity的onCreate，之后才会调用initData等方法
+        //不这样会报空指针异常
         super.onCreate(savedInstanceState);
     }
 
@@ -42,8 +45,9 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void initListener() {
-        //页面回调
+        //设值注入，初始化MyBottomLayout页面的回调实例
         myBottomLayout.setOnCallbackListener(new MyCallBackListener());
+
         //ViewPager页面监听 使用add而不是set
         myViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -56,7 +60,7 @@ public class MainActivity extends BaseActivity {
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                //0是禁止，1是正在滑动，2是停止滑动
+                //0是静止，1是正在滑动，2是停止滑动
                 if (state == 2) {
                     //设置滑动ViewPager导航同步变化
                     myBottomLayout.setResidAndColor(myViewPager.getCurrentItem());
@@ -66,7 +70,8 @@ public class MainActivity extends BaseActivity {
     }
 
     /**
-     * 实现回调方法，切换Fragment
+     * 实现回调监听方法，用于改变当前item值
+     * 在FragmentPagerAdapter的getItem方法中切换Fragment
      */
     private class MyCallBackListener implements MyBottomLayout.ICallbackListener {
 
@@ -93,7 +98,7 @@ public class MainActivity extends BaseActivity {
     }
 
     /**
-     * viewPager的adapter
+     * viewPager的adapter，改变当前fragment
      */
     private class MyFragmentAdapter extends FragmentPagerAdapter {
 
@@ -128,5 +133,4 @@ public class MainActivity extends BaseActivity {
     @Override
     public void progress() {
     }
-
 }
