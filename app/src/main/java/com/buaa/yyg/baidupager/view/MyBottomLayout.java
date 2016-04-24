@@ -80,7 +80,7 @@ public class MyBottomLayout extends LinearLayout implements View.OnClickListener
         view.findViewById(R.id.tabImg).setBackgroundResource(resid);
         TextView tv = (TextView) view.findViewById(R.id.tabText);
         tv.setText(name);
-        tv.setTextColor(color);
+        tv.setTextColor( (color == 1) ? Color.BLUE : Color.WHITE);
     }
 
     /**
@@ -137,64 +137,47 @@ public class MyBottomLayout extends LinearLayout implements View.OnClickListener
         iCallbackListener.click(v.getId());
     }
 
+    /**
+     * 设置Res和Color
+     * @param i
+     */
     public void setResidAndColor(int i) {
         switch (i) {
             case 0:
-                changeDataItem(new int[] {
-                                R.mipmap.image_tabbar_button_home_down,
-                                R.mipmap.image_tabbar_button_chosen,
-                                R.mipmap.image_tabbar_button_search,
-                                R.mipmap.image_tabbar_button_local,
-                                R.mipmap.image_tabbar_button_setting},
-                        new int[] {
-                                Color.BLUE, Color.WHITE, Color.WHITE, Color.WHITE, Color.WHITE,
-                        });
+                changeDataItem(setResid(new int[] {1, 0, 0, 0, 0}),
+                        new int[] {1, 0, 0, 0, 0});
                 break;
             case 1:
-                changeDataItem(new int[] {
-                                R.mipmap.image_tabbar_button_home,
-                                R.mipmap.image_tabbar_button_chosen_down,
-                                R.mipmap.image_tabbar_button_search,
-                                R.mipmap.image_tabbar_button_local,
-                                R.mipmap.image_tabbar_button_setting},
-                        new int[] {
-                                Color.WHITE, Color.BLUE, Color.WHITE, Color.WHITE, Color.WHITE,
-                        });
+                changeDataItem(setResid(new int[] {0, 1, 0, 0, 0}),
+                        new int[] {0, 1, 0, 0, 0});
                 break;
             case 2:
-                changeDataItem(new int[] {
-                                R.mipmap.image_tabbar_button_home,
-                                R.mipmap.image_tabbar_button_chosen,
-                                R.mipmap.image_tabbar_button_search_down,
-                                R.mipmap.image_tabbar_button_local,
-                                R.mipmap.image_tabbar_button_setting},
-                        new int[] {
-                                Color.WHITE, Color.WHITE, Color.BLUE, Color.WHITE, Color.WHITE,
-                        });
+                changeDataItem(setResid(new int[] {0, 0, 1, 0, 0}),
+                        new int[] {0, 0, 1, 0, 0});
                 break;
             case 3:
-                changeDataItem(new int[] {
-                                R.mipmap.image_tabbar_button_home,
-                                R.mipmap.image_tabbar_button_chosen,
-                                R.mipmap.image_tabbar_button_search,
-                                R.mipmap.image_tabbar_button_local_down,
-                                R.mipmap.image_tabbar_button_setting},
-                        new int[] {
-                                Color.WHITE, Color.WHITE, Color.WHITE, Color.BLUE, Color.WHITE,
-                        });
+                changeDataItem(setResid(new int[] {0, 0, 0, 1, 0}),
+                        new int[] {0, 0, 0, 1, 0});
                 break;
             case 4:
-                changeDataItem(new int[] {
-                                R.mipmap.image_tabbar_button_home,
-                                R.mipmap.image_tabbar_button_chosen,
-                                R.mipmap.image_tabbar_button_search,
-                                R.mipmap.image_tabbar_button_local,
-                                R.mipmap.image_tabbar_button_setting_down},
-                        new int[] {
-                                Color.WHITE, Color.WHITE, Color.WHITE, Color.WHITE, Color.BLUE,
-                        });
+                changeDataItem(setResid(new int[] {0, 0, 0, 0, 1}) ,
+                        new int[] {0, 0, 0, 0, 1});
                 break;
         }
+    }
+
+    /**
+     * 统一设置Res的地方，留有参数和返回值
+     * @param resid 数组，1表示选中，0表示未选中，导航页5个item都要进行判断
+     * @return 返回当前设置的Res，作为changeDataItem的参数
+     */
+    public int[] setResid(int[] resid) {
+       int resHome =  (resid[0] == 1) ?  R.mipmap.image_tabbar_button_home_down : R.mipmap.image_tabbar_button_home;
+       int resChosen =  (resid[1] == 1) ?  R.mipmap.image_tabbar_button_chosen_down : R.mipmap.image_tabbar_button_chosen;
+       int resSearch =  (resid[2] == 1) ?  R.mipmap.image_tabbar_button_search_down : R.mipmap.image_tabbar_button_search;
+       int resLocal =  (resid[3] == 1) ?  R.mipmap.image_tabbar_button_local_down : R.mipmap.image_tabbar_button_local;
+       int resSetting =  (resid[4] == 1) ?  R.mipmap.image_tabbar_button_setting_down : R.mipmap.image_tabbar_button_setting;
+       return new int[] {resHome, resChosen, resSearch, resLocal, resSetting};
     }
 
     //初始化接口，由需要实现activity（MainActivity）调用
