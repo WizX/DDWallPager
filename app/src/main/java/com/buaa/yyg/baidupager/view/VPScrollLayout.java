@@ -93,6 +93,24 @@ public class VPScrollLayout extends LinearLayout {
             }
         });
 
+        //对子view实现setOnTouchListener(new ...)监听，在onTouch()方法里，进行拦截。
+        // 调用当前子view的onInterceptTouchEvent()方法。
+//        viewpager.setOnTouchListener(new OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                switch (event.getAction()) {
+//                    case MotionEvent.ACTION_MOVE:
+//                        (v.getParent()).requestDisallowInterceptTouchEvent(true);
+//                        break;
+//                    case MotionEvent.ACTION_UP:
+//                    case MotionEvent.ACTION_CANCEL:
+//                        (v.getParent()).requestDisallowInterceptTouchEvent(false);
+//                        break;
+//                }
+//                return false;
+//            }
+//        });
+
     }
 
     /**
@@ -157,6 +175,9 @@ public class VPScrollLayout extends LinearLayout {
         timerTask = new TimerTask() {
             @Override
             public void run() {
+                //通知handler改变view
+                hand();
+
                 //每运行一次+1
                 index ++;
                 //保证循环轮播
@@ -164,9 +185,6 @@ public class VPScrollLayout extends LinearLayout {
                     index = 0;
                 }
                 timer.schedule(timerTask, delayTime, delayTime);
-
-                //通知handler改变view
-                hand();
             }
         };
     }

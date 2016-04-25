@@ -9,17 +9,19 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.buaa.yyg.baidupager.R;
+import com.buaa.yyg.baidupager.adapter.GridViewAdapter;
 import com.buaa.yyg.baidupager.domain.HomeGrid;
+import com.buaa.yyg.baidupager.view.DisGridView;
+import com.buaa.yyg.baidupager.view.DisScrollView;
 import com.buaa.yyg.baidupager.view.VPScrollLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * 主页
  * Created by yyg on 2016/4/22.
- */  
+ */
 public class HomeFragment extends Fragment {
 
     private ViewPager myViewPager;
@@ -27,6 +29,8 @@ public class HomeFragment extends Fragment {
     private VPScrollLayout vpScroll;
     private List<View> bitmap = new ArrayList<>();
     private List<HomeGrid> gridData = new ArrayList<>();
+    private DisGridView mGridView;
+    private DisScrollView disScroolView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -49,6 +53,10 @@ public class HomeFragment extends Fragment {
         vpScroll = (VPScrollLayout) view.findViewById(R.id.vp_scroll);
         //拿到VPScrollLayout的ViewPager对象
         myViewPager = vpScroll.getViewpager();
+
+        //找到GridView
+        mGridView = (DisGridView) view.findViewById(R.id.gridview);
+        disScroolView = (DisScrollView) view.findViewById(R.id.disScroolView);
     }
 
     /**
@@ -56,9 +64,15 @@ public class HomeFragment extends Fragment {
      */
     private void init() {
         initVPData();
+        initGridData();
+        //设置ViewPager的adap
         myViewPager.setAdapter(new MyAdapter());
         //设置多长时间轮播
         vpScroll.setPagerFromTime(1000);
+        //设置GridView的adapter
+        mGridView.setAdapter(new GridViewAdapter(getActivity(), gridData));
+        //设置每次进入现最前面
+//        disScroolView.smoothScrollTo(0,0);
     }
 
     /**

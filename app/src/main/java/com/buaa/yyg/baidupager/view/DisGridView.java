@@ -33,6 +33,6 @@ public class DisGridView extends GridView{
         //由于手机不可能用得到这么大的数据，所有模式用AT_MOST模式
         int height = MeasureSpec.makeMeasureSpec(Integer.MAX_VALUE >> 2, MeasureSpec.AT_MOST);
         //宽度不变，交由父类处理
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        super.onMeasure(widthMeasureSpec, height);
     }
 }
