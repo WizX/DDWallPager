@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -62,9 +61,9 @@ public class VPScrollLayout extends LinearLayout {
             switch (msg.what) {
                 case what:
                     //获取数据
-                    index = msg.getData().getInt("index");
-                    Log.i(TAG, "index = " + index);
-                    setDotView();
+                    int index = msg.getData().getInt("index");
+//                    Log.i(TAG, "index = " + index);
+                    setDotView(index);
                     break;
             }
         }
@@ -141,9 +140,9 @@ public class VPScrollLayout extends LinearLayout {
     /**
      * 设置轮播，定时更新数据
      */
-    private void setDotView() {
+    private void setDotView(int index) {
         viewpager.setCurrentItem(index);
-        Log.i(TAG, "indexs = " + index);
+//        Log.i(TAG, "indexs = " + index);
         switch (index) {
             case 0:
                 setRes(new int[] {1, 0, 0, 0});
@@ -170,7 +169,7 @@ public class VPScrollLayout extends LinearLayout {
         imgFour.setBackgroundResource( (res[3] == 1) ? R.mipmap.point_selected : R.mipmap.point_normal);
     }
 
-    public void setPagerFromTime(final int delayTime) {
+    public void setPagerFromTime(int delayTime) {
         timer = new Timer();
         timerTask = new TimerTask() {
             @Override
@@ -179,14 +178,14 @@ public class VPScrollLayout extends LinearLayout {
                 hand();
 
                 //每运行一次+1
-                index ++;
+                index++;
                 //保证循环轮播
                 if (index == 4) {
                     index = 0;
                 }
-                timer.schedule(timerTask, delayTime, delayTime);
             }
         };
+        timer.schedule(timerTask, delayTime, delayTime);
     }
 
     public ViewPager getViewpager() {

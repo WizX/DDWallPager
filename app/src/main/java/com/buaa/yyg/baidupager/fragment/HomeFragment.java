@@ -63,8 +63,12 @@ public class HomeFragment extends Fragment {
      * 初始化
      */
     private void init() {
-        initVPData();
-        initGridData();
+        if (bitmap.size() == 0) {
+            initVPData();
+        }
+        if (gridData.size() == 0) {
+            initGridData();
+        }
         //设置ViewPager的adap
         myViewPager.setAdapter(new MyAdapter());
         //设置多长时间轮播
