@@ -17,6 +17,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.ScaleAnimation;
 import android.widget.AbsoluteLayout;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.buaa.yyg.baidupager.R;
@@ -89,6 +91,8 @@ public class SearchFragment extends Fragment {
         }
 
     };
+    private EditText et_search;
+    private ImageView iv_search;
 
 
     /**
@@ -166,6 +170,8 @@ public class SearchFragment extends Fragment {
         view.setLongClickable(true);
         view.setOnTouchListener(new MyOnTouch());
 
+        et_search = (EditText) view.findViewById(R.id.et_search);
+        iv_search = (ImageView) view.findViewById(R.id.iv_search);
         myLayoutOne = (AbsoluteLayout) view.findViewById(R.id.myLayoutOne);
         myLayoutTwo = (AbsoluteLayout) view.findViewById(R.id.myLayoutTwo);
     }
@@ -189,6 +195,8 @@ public class SearchFragment extends Fragment {
         initData();
         //设置默认数据
         setData(myLayoutOne, index);
+        //设置imageview清空edittext监听
+        setListener();
     }
 
     /**
@@ -199,21 +207,43 @@ public class SearchFragment extends Fragment {
         for (int i = 0; i < 2; i++) {
             switch (i) {
                 case 0:
+                    //实际开发中数据还是得从服务器获取
                     ArrayList<String> newDataOne = new ArrayList<>();
-                    //15个数据
-                    for (int j = 0; j < 15; j++) {
-                        //实际开发中数据还是得从服务器获取
-                        newDataOne.add("海贼王");
-                    }
+                    newDataOne.add("浪漫");
+                    newDataOne.add("可爱");
+                    newDataOne.add("风景");
+                    newDataOne.add("美女");
+                    newDataOne.add("卡通");
+                    newDataOne.add("动漫");
+                    newDataOne.add("植物");
+                    newDataOne.add("美食");
+                    newDataOne.add("建筑");
+                    newDataOne.add("星座");
+                    newDataOne.add("友情");
+                    newDataOne.add("泳装");
+                    newDataOne.add("写真");
+                    newDataOne.add("小清新");
+                    newDataOne.add("艺术");
                     //添加数据
                     data.add(newDataOne);
                     break;
                 case 1:
                     ArrayList<String> newDataTwo = new ArrayList<>();
-                    //15个数据
-                    for (int j = 0; j < 15; j++) {
-                        newDataTwo.add("火影忍者");
-                    }
+                    newDataTwo.add("俏皮");
+                    newDataTwo.add("丝袜");
+                    newDataTwo.add("性感");
+                    newDataTwo.add("背影");
+                    newDataTwo.add("美腿");
+                    newDataTwo.add("车模");
+                    newDataTwo.add("汽车");
+                    newDataTwo.add("影视");
+                    newDataTwo.add("唯美");
+                    newDataTwo.add("韩国");
+                    newDataTwo.add("军事");
+                    newDataTwo.add("沙滩");
+                    newDataTwo.add("爱情");
+                    newDataTwo.add("非主流");
+                    newDataTwo.add("伤感");
                     //添加数据
                     data.add(newDataTwo);
 
@@ -232,14 +262,14 @@ public class SearchFragment extends Fragment {
         //每次加载之前清除
         myLayout.removeAllViews();
         //有数据了之后开始随机分布了
-        int startY = 50;
+        int startY = 10;
         //X动态生成,判断是第几页的数据，左右两边间距50，用户体验
         for (int i = 0; i < data.get(index).size(); i++) {
-            int x = get(50, mWidth - 100);
+            int x = get(50, mWidth - 150);
             int y = startY;
 
             //文本显示
-            TextView tv = new TextView(getActivity());
+            final TextView tv = new TextView(getActivity());
             tv.setTextSize(12);
             //随机
             tv.setText(data.get(index).get(i));
@@ -247,13 +277,23 @@ public class SearchFragment extends Fragment {
             //设置随机颜色值
             tv.setTextColor(Color.argb(255, get(30, 210), get(30, 210), get(30, 210)));
 
+            //设置点击变侦听
+            tv.setClickable(true);
+            tv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    et_search.setText(tv.getText());
+                    et_search.setSelection(tv.getText().length());
+                }
+            });
+
             /**
              * 高，宽，x,y
              */
             AbsoluteLayout.LayoutParams layout = new AbsoluteLayout.LayoutParams(100, 50, x, y);
             myLayout.addView(tv, layout);
             //开始随机分布
-            startY += 50;
+            startY += 80;
         }
     }
 
@@ -267,6 +307,15 @@ public class SearchFragment extends Fragment {
     private int get(int min, int max) {
         //从最大到最小的随机数值
         return new Random().nextInt(max)  + min;
+    }
+
+    private void setListener() {
+        iv_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                et_search.setText("");
+            }
+        });
     }
 
     /**

@@ -15,8 +15,8 @@
             android:orientation="vertical">
 
             <com.buaa.yyg.baidupager.view.DisGridView
-                android:horizontalSpacing="10dp"
-                android:verticalSpacing="10dp"
+                android:horizontalSpacing="5dp"
+                android:verticalSpacing="5dp"
                 android:numColumns="3"
                 android:id="@+id/mGridView"
                 android:layout_width="match_parent"

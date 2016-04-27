@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.buaa.yyg.baidupager.R;
@@ -59,6 +60,10 @@ public class GridViewAdapter extends BaseAdapter{
             viewHolder = (ViewHolder) convertView.getTag();
         }
         viewHolder.img.setBackgroundResource(gridData.get(position).getImg());
+        if (position == 0) {
+            viewHolder.img.setScaleType(ImageView.ScaleType.MATRIX);
+            viewHolder.img.setImageResource(R.mipmap.hot);
+        }
         viewHolder.tv.setText(gridData.get(position).getType());
         //动态设置高度，对应与DisGridView的onMeasure，解决布局冲突
         convertView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 300));

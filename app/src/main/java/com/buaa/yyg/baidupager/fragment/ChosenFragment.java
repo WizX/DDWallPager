@@ -1,6 +1,7 @@
 package com.buaa.yyg.baidupager.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -9,9 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 
 import com.buaa.yyg.baidupager.R;
+import com.buaa.yyg.baidupager.activity.GalleryActivity;
 import com.buaa.yyg.baidupager.view.DisGridView;
 import com.buaa.yyg.baidupager.view.LoadReshView;
 import com.loopj.android.image.SmartImageView;
@@ -76,13 +79,19 @@ public class ChosenFragment extends Fragment {
         initGridData();
         adapter = new myAdapter(getActivity());
         myGridView.setAdapter(adapter);
+        myGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                startActivity(new Intent(getActivity(), GalleryActivity.class));
+            }
+        });
     }
 
     /**
      * GridView数据
      */
     private void initGridData() {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 30; i++) {
             //添加数据
             data.add(R.mipmap.nice);
         }
@@ -156,7 +165,7 @@ public class ChosenFragment extends Fragment {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
             //设置数据
-            convertView.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, 300));
+            convertView.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, 250));
             viewHolder.imgs.setBackgroundResource(R.mipmap.nice);
             return convertView;
         }
