@@ -165,7 +165,7 @@ public class ChosenFragment extends Fragment {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
             //设置数据
-            convertView.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, 250));
+            convertView.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, 280));
             viewHolder.imgs.setBackgroundResource(R.mipmap.nice);
             return convertView;
         }

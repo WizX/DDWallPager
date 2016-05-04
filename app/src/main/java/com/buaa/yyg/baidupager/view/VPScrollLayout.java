@@ -141,8 +141,10 @@ public class VPScrollLayout extends LinearLayout {
      * 设置轮播，定时更新数据
      */
     private void setDotView(int index) {
+        //设置轮播显示第几张图片
         viewpager.setCurrentItem(index);
 //        Log.i(TAG, "indexs = " + index);
+        //设置显示第几个小圆点
         switch (index) {
             case 0:
                 setRes(new int[] {1, 0, 0, 0});

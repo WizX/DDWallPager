@@ -7,6 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.buaa.yyg.baidupager.R;
 import com.buaa.yyg.baidupager.adapter.GridViewAdapter;
@@ -31,6 +32,7 @@ public class HomeFragment extends Fragment {
     private List<HomeGrid> gridData = new ArrayList<>();
     private DisGridView mGridView;
     private DisScrollView disScroolView;
+    private RelativeLayout rl_top;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,6 +59,7 @@ public class HomeFragment extends Fragment {
         //找到GridView
         mGridView = (DisGridView) view.findViewById(R.id.gridview);
         disScroolView = (DisScrollView) view.findViewById(R.id.disScroolView);
+        rl_top = (RelativeLayout) view.findViewById(R.id.rl_top);
     }
 
     /**
@@ -77,6 +80,12 @@ public class HomeFragment extends Fragment {
         mGridView.setAdapter(new GridViewAdapter(getActivity(), gridData));
         //设置每次进入现最前面
 //        disScroolView.smoothScrollTo(0,0);
+
+        //解决scrollview自动滚动到底部的问题
+        //在初始化的时候就让该界面的顶部的某一个控件获得焦点，滚动条自然就显示到顶部了
+        rl_top.setFocusable(true);
+        rl_top.setFocusableInTouchMode(true);
+        rl_top.requestFocus();
     }
 
     /**

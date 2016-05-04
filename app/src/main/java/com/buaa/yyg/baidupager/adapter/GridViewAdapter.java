@@ -66,7 +66,7 @@ public class GridViewAdapter extends BaseAdapter{
         }
         viewHolder.tv.setText(gridData.get(position).getType());
         //动态设置高度，对应与DisGridView的onMeasure，解决布局冲突
-        convertView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 300));
+        convertView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 380));
         return convertView;
     }
 
