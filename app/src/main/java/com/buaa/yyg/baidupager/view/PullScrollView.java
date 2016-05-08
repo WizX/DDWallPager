@@ -10,6 +10,7 @@ import android.widget.ScrollView;
  */
 public class PullScrollView extends ScrollView{
     private static  final  String LOAD = "load";
+    boolean flag = true;
 
     public IcallBack icallBack = null;
 
@@ -46,21 +47,29 @@ public class PullScrollView extends ScrollView{
         //getChildAt(0).getMeasuredHeight() 内容的高度
         //getScrollY() 滑动的高度
         //getHeight() gridView的高度
-        if (getChildAt(0) != null && getChildAt(0).getMeasuredHeight() <= getScrollY() + getHeight()) {
+        if (getChildAt(0) != null && flag && getChildAt(0).getMeasuredHeight() <= getScrollY() + getHeight()) {
             //判断为true，表示拉到底部了，不再调用click
-            if (LoadReshView.getBottomOrTop()) {
+            if (LoadReshView.getBottomOrTop() ) {
                 return;
             }
             //回调到下一个页面
             icallBack.click(LOAD);
+
+            //设置标志控制符
+            flag = false;
         }
     }
+
+    //数据加载完毕，将并发控制符置为true
+     public void loadingComponent(){
+         flag = true;
+     }
 
     /**
      * 定义一个底部的接口
      */
     public interface IcallBack {
-        public void click(String bottom);
+        void click(String bottom);
     }
 
     /**

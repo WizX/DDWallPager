@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -45,6 +46,7 @@ public class LoadReshView extends LinearLayout {
                 case REFRESH:
                     isBottomClose();
                     isShow = false;
+                    pullScrollView.loadingComponent();
                     break;
             }
             super.handleMessage(msg);
@@ -91,7 +93,7 @@ public class LoadReshView extends LinearLayout {
             //拉到底部了，显示textview
             if (bottom.equals(LOAD)) {
                 pull.load();
-                //显示textview
+                //正在加载数据
                 handler.sendEmptyMessage(LOADDATA);
             } else {
                 //刷新加载图片
@@ -132,6 +134,7 @@ public class LoadReshView extends LinearLayout {
      * @return
      */
     public static boolean getBottomOrTop() {
+        Log.d("oooo", "isShow " + isShow);
         return isShow;
     }
 

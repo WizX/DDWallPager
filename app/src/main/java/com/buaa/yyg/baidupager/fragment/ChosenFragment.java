@@ -6,21 +6,24 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 
 import com.buaa.yyg.baidupager.R;
 import com.buaa.yyg.baidupager.activity.GalleryActivity;
+import com.buaa.yyg.baidupager.global.Constant;
 import com.buaa.yyg.baidupager.view.DisGridView;
 import com.buaa.yyg.baidupager.view.LoadReshView;
-import com.loopj.android.image.SmartImageView;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-
+import java.util.List;
 
 /**
  * 精选
@@ -30,7 +33,7 @@ public class ChosenFragment extends Fragment {
 
     private LoadReshView loadview;
     private DisGridView myGridView;
-    private ArrayList<Integer> data = new ArrayList<>();
+    private List<String> images = new ArrayList<>();
     private myAdapter adapter;
 
     private Handler handle= new Handler(){
@@ -76,7 +79,9 @@ public class ChosenFragment extends Fragment {
      */
     private void init() {
         loadview.setpullCallBack(new PullClick());
-        initGridData();
+        if (images.size() == 0) {
+            initGridData();
+        }
         adapter = new myAdapter(getActivity());
         myGridView.setAdapter(adapter);
         myGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -91,10 +96,11 @@ public class ChosenFragment extends Fragment {
      * GridView数据
      */
     private void initGridData() {
-        for (int i = 0; i < 30; i++) {
+        for (int i = 1; i <= 19; i++) {
             //添加数据
-            data.add(R.mipmap.nice);
+            images.add(Constant.URL + "/chosenimg/" + i + ".jpg" + "\n");
         }
+        Log.d("123", images.toString());
     }
 
     private class PullClick implements LoadReshView.pullCallBack {
@@ -104,24 +110,22 @@ public class ChosenFragment extends Fragment {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-
                     try {
                         //睡一下
-                        Thread.sleep(2000);
+                        Thread.sleep(1000);
                         initGridData();
+
                         handle.sendEmptyMessage(100);
-                    } catch (InterruptedException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             }).start();
-
         }
 
         //刷新数据
         @Override
         public void reFresh() {
-
         }
     }
 
@@ -130,22 +134,20 @@ public class ChosenFragment extends Fragment {
      */
     private class myAdapter extends BaseAdapter {
 
-        private Context mContext;
         private LayoutInflater inflater;
 
         public myAdapter(Context mContext) {
-            this.mContext = mContext;
             inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
         @Override
         public int getCount() {
-            return data.size();
+            return images.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return data.get(position);
+            return images.get(position);
         }
 
         @Override
@@ -159,19 +161,24 @@ public class ChosenFragment extends Fragment {
             if (convertView == null) {
                 convertView = inflater.inflate(R.layout.chosen_item, null);
                 viewHolder = new ViewHolder();
-                viewHolder.imgs = (SmartImageView) convertView.findViewById(R.id.smartimg);
+                viewHolder.imgs = (ImageView) convertView.findViewById(R.id.img);
                 convertView.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
             //设置数据
-            convertView.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, 280));
-            viewHolder.imgs.setBackgroundResource(R.mipmap.nice);
+            convertView.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, 600));
+
+            Picasso.with(getActivity())
+                    .load(images.get(position))
+                    .placeholder(R.mipmap.chosen1)
+                    .error(R.mipmap.chosen1)
+                    .into(viewHolder.imgs);
             return convertView;
         }
     }
 
     static class ViewHolder {
-        SmartImageView imgs;
+        ImageView imgs;
     }
 }

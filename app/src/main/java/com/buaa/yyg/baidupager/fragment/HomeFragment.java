@@ -7,14 +7,17 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.buaa.yyg.baidupager.R;
 import com.buaa.yyg.baidupager.adapter.GridViewAdapter;
 import com.buaa.yyg.baidupager.domain.HomeGrid;
+import com.buaa.yyg.baidupager.global.Constant;
 import com.buaa.yyg.baidupager.view.DisGridView;
 import com.buaa.yyg.baidupager.view.DisScrollView;
 import com.buaa.yyg.baidupager.view.VPScrollLayout;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +31,7 @@ public class HomeFragment extends Fragment {
     private ViewPager myViewPager;
     private View view;
     private VPScrollLayout vpScroll;
-    private List<View> bitmap = new ArrayList<>();
+    private List<String> images = new ArrayList<>();
     private List<HomeGrid> gridData = new ArrayList<>();
     private DisGridView mGridView;
     private DisScrollView disScroolView;
@@ -66,14 +69,18 @@ public class HomeFragment extends Fragment {
      * 初始化
      */
     private void init() {
-        if (bitmap.size() == 0) {
-            initVPData();
+
+        for (int i = 1; i <= 4; i++) {
+            String vpurl = Constant.URL + "/viewpager/" + i + ".jpg";
+            images.add(vpurl);
         }
+
         if (gridData.size() == 0) {
             initGridData();
         }
-        //设置ViewPager的adap
+        //设置ViewPager的adapter
         myViewPager.setAdapter(new MyAdapter());
+
         //设置多长时间轮播
         vpScroll.setPagerFromTime(1000);
         //设置GridView的adapter
@@ -101,29 +108,13 @@ public class HomeFragment extends Fragment {
     }
 
     /**
-     * 初始化图片
-     */
-    private void initVPData() {
-        setVPRes(R.mipmap.img1);
-        setVPRes(R.mipmap.img2);
-        setVPRes(R.mipmap.img3);
-        setVPRes(R.mipmap.img4);
-    }
-
-    private void setVPRes(int resId) {
-        View view = getActivity().getLayoutInflater().inflate(R.layout.vp_scroll_item, null);
-        view.findViewById(R.id.vpImg).setBackgroundResource(resId);
-        bitmap.add(view);
-    }
-
-    /**
      * adapter
      */
     private class MyAdapter extends PagerAdapter {
 
         @Override
         public int getCount() {
-            return bitmap.size();
+            return images.size();
         }
 
         @Override
@@ -134,13 +125,22 @@ public class HomeFragment extends Fragment {
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
             //删除
-            container.removeView(bitmap.get(position));
+            container.removeView((View) object);
         }
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            container.addView(bitmap.get(position));
-            return bitmap.get(position);
+
+            View vpView = getActivity().getLayoutInflater().inflate(R.layout.vp_scroll_item, null);
+            container.addView(vpView);
+            ImageView imageView = (ImageView) vpView.findViewById(R.id.vpImg);
+            Picasso.with(getActivity())
+                    .load(images.get(position))
+                    .resize(getResources().getDisplayMetrics().widthPixels, 550)
+                    .placeholder(R.mipmap.vp1)
+                    .error(R.mipmap.vp1)
+                    .into(imageView);
+            return vpView;
         }
     }
 
