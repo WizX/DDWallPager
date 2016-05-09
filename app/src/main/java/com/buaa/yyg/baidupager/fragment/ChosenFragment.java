@@ -14,16 +14,18 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.buaa.yyg.baidupager.R;
 import com.buaa.yyg.baidupager.activity.GalleryActivity;
 import com.buaa.yyg.baidupager.global.Constant;
 import com.buaa.yyg.baidupager.view.DisGridView;
 import com.buaa.yyg.baidupager.view.LoadReshView;
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Random;
 
 /**
  * 精选
@@ -33,14 +35,15 @@ public class ChosenFragment extends Fragment {
 
     private LoadReshView loadview;
     private DisGridView myGridView;
-    private List<String> images = new ArrayList<>();
+    private ArrayList<String> images = new ArrayList<>();
     private myAdapter adapter;
+    private static final int LOADING_COMPLETE = 1;
 
     private Handler handle= new Handler(){
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what){
-                case 100:
+                case LOADING_COMPLETE:
                     adapter.notifyDataSetChanged();
                     //数据加载完成，让LoadReshView的正在加载中textview消失
                     loadview.dataFinish();
@@ -49,6 +52,7 @@ public class ChosenFragment extends Fragment {
             super.handleMessage(msg);
         }
     };
+    private TextView tv_refresh_top;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -64,6 +68,7 @@ public class ChosenFragment extends Fragment {
      */
     private void findView(View view) {
         loadview = (LoadReshView) view.findViewById(R.id.myloadview);
+        tv_refresh_top = (TextView) view.findViewById(R.id.tv_refresh_top);
 //                myGridView = (DisGridView) view.findViewById(R.id.mGridView);
         myGridView = loadview.getGridView();
     }
@@ -87,18 +92,30 @@ public class ChosenFragment extends Fragment {
         myGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                startActivity(new Intent(getActivity(), GalleryActivity.class));
+                Intent intent = new Intent(getActivity(), GalleryActivity.class);
+                intent.putStringArrayListExtra("images", images);
+                intent.putExtra("position", position);
+                startActivity(intent);
+            }
+        });
+        setOnClickListener();
+    }
+
+    private void setOnClickListener() {
+        tv_refresh_top.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadview.getpullScrollView().refeshDate();
             }
         });
     }
-
     /**
      * GridView数据
      */
     private void initGridData() {
         for (int i = 1; i <= 19; i++) {
             //添加数据
-            images.add(Constant.URL + "/chosenimg/" + i + ".jpg" + "\n");
+            images.add(Constant.URL + "/chosenimg/" + i + ".jpg");
         }
         Log.d("123", images.toString());
     }
@@ -106,7 +123,7 @@ public class ChosenFragment extends Fragment {
     private class PullClick implements LoadReshView.pullCallBack {
         //加载数据
         @Override
-        public void load() {
+        public void loadBottom() {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -114,8 +131,8 @@ public class ChosenFragment extends Fragment {
                         //睡一下
                         Thread.sleep(1000);
                         initGridData();
-
-                        handle.sendEmptyMessage(100);
+                        Log.d("123", "底部数据已经加载完了");
+                        handle.sendEmptyMessage(LOADING_COMPLETE);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -123,11 +140,34 @@ public class ChosenFragment extends Fragment {
             }).start();
         }
 
-        //刷新数据
         @Override
-        public void reFresh() {
+        public void loadTop() {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Random random = new Random();
+                        //睡一下
+                        Thread.sleep(1000);
+
+                        for (int i = 1; i <= 19; i++) {
+                            int num = random.nextInt(18) + 1;
+                            //添加数据到集合的第一个位置
+                            images.add(0, Constant.URL + "/chosenimg/" + num + ".jpg");
+                        }
+                        Log.d("123", images.toString());
+
+                        Log.d("123", "顶部数据已经加载完了");
+                        handle.sendEmptyMessage(LOADING_COMPLETE);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
         }
     }
+
+
 
     /**
      * GridView的Adapter
@@ -156,29 +196,20 @@ public class ChosenFragment extends Fragment {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder viewHolder;
+        public View getView(int position, android.view.View convertView, ViewGroup parent) {
             if (convertView == null) {
-                convertView = inflater.inflate(R.layout.chosen_item, null);
-                viewHolder = new ViewHolder();
-                viewHolder.imgs = (ImageView) convertView.findViewById(R.id.img);
-                convertView.setTag(viewHolder);
-            } else {
-                viewHolder = (ViewHolder) convertView.getTag();
+                convertView = inflater.inflate(R.layout.chosen_item, parent, false);
             }
             //设置数据
             convertView.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, 600));
 
-            Picasso.with(getActivity())
+            Glide.with(ChosenFragment.this)
                     .load(images.get(position))
                     .placeholder(R.mipmap.chosen1)
-                    .error(R.mipmap.chosen1)
-                    .into(viewHolder.imgs);
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .thumbnail(1)
+                    .into((ImageView) convertView);
             return convertView;
         }
-    }
-
-    static class ViewHolder {
-        ImageView imgs;
     }
 }

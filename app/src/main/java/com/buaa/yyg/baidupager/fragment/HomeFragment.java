@@ -17,7 +17,8 @@ import com.buaa.yyg.baidupager.global.Constant;
 import com.buaa.yyg.baidupager.view.DisGridView;
 import com.buaa.yyg.baidupager.view.DisScrollView;
 import com.buaa.yyg.baidupager.view.VPScrollLayout;
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -134,11 +135,11 @@ public class HomeFragment extends Fragment {
             View vpView = getActivity().getLayoutInflater().inflate(R.layout.vp_scroll_item, null);
             container.addView(vpView);
             ImageView imageView = (ImageView) vpView.findViewById(R.id.vpImg);
-            Picasso.with(getActivity())
+
+            Glide.with(HomeFragment.this)
                     .load(images.get(position))
-                    .resize(getResources().getDisplayMetrics().widthPixels, 550)
-                    .placeholder(R.mipmap.vp1)
-                    .error(R.mipmap.vp1)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .thumbnail(1)
                     .into(imageView);
             return vpView;
         }

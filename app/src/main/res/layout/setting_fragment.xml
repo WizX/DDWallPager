@@ -119,6 +119,7 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/tv_check_version"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@mipmap/image_more_subitems_bottom"
@@ -130,13 +131,13 @@
             android:layout_marginLeft="10dp"
             android:text="检查更新" />
 
-        <ImageView
+        <TextView
+            android:id="@+id/tv_version_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginRight="10dp"
-            android:src="@mipmap/image_list_open_item"
-            android:visibility="invisible" />
+            android:text="版本号" />
 
     </RelativeLayout>
 

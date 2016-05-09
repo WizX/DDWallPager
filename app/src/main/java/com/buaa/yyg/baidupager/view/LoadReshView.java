@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.buaa.yyg.baidupager.R;
 
@@ -19,15 +20,21 @@ import com.buaa.yyg.baidupager.R;
 public class LoadReshView extends LinearLayout {
 
     private static final String LOAD = "load";
-    private static final int LOADDATA = 1;
-    private static final int REFRESH = 2;
+                //加载底部数据中，显示正在加载textview
+    private static final int LOAD_BOTTOM = 0;
+                //加载底部数据中，显示正在加载textview
+    private static final int LOAD_TOP = 1;
+                //加载完成，恢复设置到初始状态，下拉和上拉共用
+    private static final int LOADING_COMPLETE = 2;
 
     //监听底部
     private PullScrollView pullScrollView;
     //数据表格
     private DisGridView mGridView;
-    //下拉显示布局
-    private LinearLayout linearLayout;
+    //下拉显示底部正在加载布局
+    private LinearLayout llloadbottom;
+    //上拉显示顶部正在加载布局
+    private RelativeLayout rlloadtop;
 
     public pullCallBack pull = null;
     //是否显示已到底部textview
@@ -39,12 +46,17 @@ public class LoadReshView extends LinearLayout {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case LOADDATA:
+                case LOAD_BOTTOM:
                     isBottomShow();
                     isShow = true;
                     break;
-                case REFRESH:
+                case LOAD_TOP:
+                    isTopShow();
+                    isShow = true;
+                    break;
+                case LOADING_COMPLETE :
                     isBottomClose();
+                    isTopClose();
                     isShow = false;
                     pullScrollView.loadingComponent();
                     break;
@@ -63,7 +75,6 @@ public class LoadReshView extends LinearLayout {
         super(context, attrs);
         initView();
     }
-
 
     /**
      * 初始化
@@ -89,15 +100,24 @@ public class LoadReshView extends LinearLayout {
     private class MyIcallback implements PullScrollView.IcallBack {
 
         @Override
-        public void click(String bottom) {
-            //拉到底部了，显示textview
+        public void clickBottom(String bottom) {
+            //拉到底部了，显示底部正在加载
             if (bottom.equals(LOAD)) {
-                pull.load();
-                //正在加载数据
-                handler.sendEmptyMessage(LOADDATA);
-            } else {
-                //刷新加载图片
-                pull.reFresh();
+                pull.loadBottom();
+                //正在加载底部数据
+                handler.sendEmptyMessage(LOAD_BOTTOM);
+                Log.d("123", "LoadReshView 显示底部加载");
+            }
+        }
+
+        @Override
+        public void clickTop(String top) {
+            //拉到顶部了，显示顶部正在加载
+            if (top.equals(LOAD)) {
+                pull.loadTop();
+                //正在加载顶部数据
+                handler.sendEmptyMessage(LOAD_TOP);
+                Log.d("123", "LoadReshView 显示顶部加载");
             }
         }
     }
@@ -106,11 +126,11 @@ public class LoadReshView extends LinearLayout {
      * 加载数据的接口
      */
     public interface pullCallBack {
-        //加載
-        public void load();
+        //下拉到底部，加载刷新数据
+        void loadBottom();
 
-        //刷新
-        public void reFresh();
+        //上拉到顶部，加载刷新数据
+        void loadTop();
     }
 
     /**
@@ -121,7 +141,8 @@ public class LoadReshView extends LinearLayout {
     private void findView(View view) {
         pullScrollView = (PullScrollView) view.findViewById(R.id.pull_scroll);
         mGridView = (DisGridView) view.findViewById(R.id.mGridView);
-        linearLayout = (LinearLayout) view.findViewById(R.id.linearLayout);
+        llloadbottom = (LinearLayout) view.findViewById(R.id.llloadbottom);
+        rlloadtop = (RelativeLayout) view.findViewById(R.id.rlloadtop);
     }
 
     public void setpullCallBack(pullCallBack pull) {
@@ -134,26 +155,42 @@ public class LoadReshView extends LinearLayout {
      * @return
      */
     public static boolean getBottomOrTop() {
-        Log.d("oooo", "isShow " + isShow);
         return isShow;
     }
 
     /**
-     * 显示底部
+     * 显示底部正在加载
      */
     public void isBottomShow() {
-        linearLayout.setVisibility(View.VISIBLE);
-    }
-
-    public void isBottomClose() {
-        linearLayout.setVisibility(View.GONE);
+        llloadbottom.setVisibility(View.VISIBLE);
     }
 
     /**
-     * 数据加载完成
+     * 隐藏底部正在加载
+     */
+    public void isBottomClose() {
+        llloadbottom.setVisibility(View.GONE);
+    }
+
+    /**
+     * 显示顶部正在加载
+     */
+    public void isTopShow() {
+        rlloadtop.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * 隐藏顶部正在加载
+     */
+    public void isTopClose() {
+        rlloadtop.setVisibility(View.GONE);
+    }
+
+    /**
+     * 数据加载完成，恢复初始标志，下拉和上拉共用
      */
     public void dataFinish() {
-        handler.sendEmptyMessage(REFRESH);
+        handler.sendEmptyMessage(LOADING_COMPLETE);
     }
 
     /**
