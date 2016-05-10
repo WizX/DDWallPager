@@ -1,10 +1,12 @@
 package com.buaa.yyg.baidupager.fragment;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -22,6 +24,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.buaa.yyg.baidupager.R;
+import com.buaa.yyg.baidupager.activity.ShowImageActivity;
+import com.buaa.yyg.baidupager.utils.UIUtils;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -209,41 +213,35 @@ public class SearchFragment extends Fragment {
                 case 0:
                     //实际开发中数据还是得从服务器获取
                     ArrayList<String> newDataOne = new ArrayList<>();
-                    newDataOne.add("浪漫");
-                    newDataOne.add("可爱");
-                    newDataOne.add("风景");
-                    newDataOne.add("美女");
-                    newDataOne.add("卡通");
-                    newDataOne.add("动漫");
-                    newDataOne.add("植物");
-                    newDataOne.add("美食");
-                    newDataOne.add("建筑");
-                    newDataOne.add("星座");
-                    newDataOne.add("友情");
-                    newDataOne.add("泳装");
-                    newDataOne.add("写真");
-                    newDataOne.add("小清新");
-                    newDataOne.add("艺术");
+                    newDataOne.add("动漫壁纸");
+                    newDataOne.add("人物壁纸");
+                    newDataOne.add("壁纸");
+                    newDataOne.add("比基尼美女");
+                    newDataOne.add("制服美女");
+                    newDataOne.add("写真艺术");
+                    newDataOne.add("性格美女");
+                    newDataOne.add("美女车展");
+                    newDataOne.add("美女头像");
+                    newDataOne.add("QQ头像");
+                    newDataOne.add("微信头像");
+                    newDataOne.add("av女演员");
+
                     //添加数据
                     data.add(newDataOne);
                     break;
                 case 1:
                     ArrayList<String> newDataTwo = new ArrayList<>();
-                    newDataTwo.add("俏皮");
-                    newDataTwo.add("丝袜");
-                    newDataTwo.add("性感");
-                    newDataTwo.add("背影");
-                    newDataTwo.add("美腿");
-                    newDataTwo.add("车模");
-                    newDataTwo.add("汽车");
-                    newDataTwo.add("影视");
-                    newDataTwo.add("唯美");
-                    newDataTwo.add("韩国");
-                    newDataTwo.add("军事");
-                    newDataTwo.add("沙滩");
-                    newDataTwo.add("爱情");
-                    newDataTwo.add("非主流");
-                    newDataTwo.add("伤感");
+                    newDataTwo.add("美女性感图片");
+                    newDataTwo.add("美女模特");
+                    newDataTwo.add("丝袜美女");
+                    newDataTwo.add("裙装美女");
+                    newDataTwo.add("美女照片");
+                    newDataTwo.add("情趣美女");
+                    newDataTwo.add("美食图片");
+                    newDataTwo.add("纹身图片");
+                    newDataTwo.add("动物图片");
+                    newDataTwo.add("影视剧照");
+                    newDataTwo.add("自拍艺术");
                     //添加数据
                     data.add(newDataTwo);
 
@@ -262,17 +260,18 @@ public class SearchFragment extends Fragment {
         //每次加载之前清除
         myLayout.removeAllViews();
         //有数据了之后开始随机分布了
-        int startY = 10;
+        int startY = 60;
         //X动态生成,判断是第几页的数据，左右两边间距50，用户体验
         for (int i = 0; i < data.get(index).size(); i++) {
-            int x = get(50, mWidth - 150);
+            int x = get(40, mWidth - 250);
             int y = startY;
 
             //文本显示
             final TextView tv = new TextView(getActivity());
-            tv.setTextSize(12);
+            tv.setTextSize(15);
             //随机
             tv.setText(data.get(index).get(i));
+            tv.setLines(1);
 
             //设置随机颜色值
             tv.setTextColor(Color.argb(255, get(30, 210), get(30, 210), get(30, 210)));
@@ -284,17 +283,90 @@ public class SearchFragment extends Fragment {
                 public void onClick(View v) {
                     et_search.setText(tv.getText());
                     et_search.setSelection(tv.getText().length());
+                    //跳转到显示图片activity
+                    startActivityNotFinish(tv.getText());
                 }
             });
 
             /**
              * 高，宽，x,y
              */
-            AbsoluteLayout.LayoutParams layout = new AbsoluteLayout.LayoutParams(100, 50, x, y);
+            AbsoluteLayout.LayoutParams layout = new AbsoluteLayout.LayoutParams(200, 50, x, y);
             myLayout.addView(tv, layout);
             //开始随机分布
-            startY += 80;
+            startY += 105;
         }
+    }
+
+    /**
+     * 跳转到显示图片activity
+     */
+    private void startActivityNotFinish(CharSequence text) {
+        Intent intent = new Intent(getActivity(), ShowImageActivity.class);
+        String type = getTypeFromText(text);
+        if (!TextUtils.isEmpty(type)) {
+            intent.putExtra("type", type);
+            startActivity(intent);
+        } else {
+            UIUtils.showToast(getActivity(), "内容不能为空");
+        }
+    }
+
+    /**
+     * 根据内容text获取type类型，用于调取网络api
+     * @param text
+     * @return
+     */
+    private String getTypeFromText(CharSequence text) {
+        String type = null;
+        if (text == "动漫壁纸") {
+            type = "dmbz";
+        } else if (text == "人物壁纸") {
+            type = "rwbz";
+        } else if (text == "壁纸") {
+            type = "bz";
+        } else if (text == "比基尼美女") {
+            type = "bijini";
+        } else if (text == "制服美女") {
+            type = "zhifu";
+        } else if (text == "写真艺术") {
+            type = "nvyou";
+        } else if (text == "性格美女") {
+            type = "xingge";
+        } else if (text == "美女车展") {
+            type = "rufang";
+        } else if (text == "美女头像") {
+            type = "meitun";
+        } else if (text == "QQ头像") {
+            type = "qqtx";
+        } else if (text == "微信头像") {
+            type = "wxtx";
+        } else if (text == "av女演员") {
+            type = "av";
+        } else if (text == "美女性感图片") {
+            type = "xinggan";
+        } else if (text == "美女模特") {
+            type = "mote";
+        } else if (text == "丝袜美女") {
+            type = "siwa";
+        } else if (text == "裙装美女") {
+            type = "qunzhuang";
+        } else if (text == "美女照片") {
+            type = "meinv";
+        } else if (text == "情趣美女") {
+            type = "qingqu";
+        } else if (text == "美食图片") {
+            type = "meishi";
+        } else if (text == "纹身图片") {
+            type = "wenshen";
+        } else if (text == "动物图片") {
+            type = "dongwu";
+        } else if (text == "影视剧照") {
+            type = "yingshi";
+        } else if (text == "自拍艺术") {
+            type = "tpzp";
+        }
+        return type;
     }
 
     /**

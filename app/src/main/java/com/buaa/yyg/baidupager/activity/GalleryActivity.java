@@ -32,9 +32,13 @@ import java.util.ArrayList;
  */
 public class GalleryActivity extends Activity implements View.OnClickListener{
 
-    private static final int SET_CURRENT_ITEM = 1;
+    private static final int SET_CURRENT_ITEM = 0;
+    private static final int SET_BITMAP_RESOURCE = 1;
     private ArrayList<String> images = new ArrayList<>();
     private int index;
+    Bitmap bmp = null;
+    private ImageView imageView;
+    private LinearLayout ll_tv_setwallpager;
     //画廊
     private ViewPager myFullViewPager;
 
@@ -45,14 +49,15 @@ public class GalleryActivity extends Activity implements View.OnClickListener{
                 case SET_CURRENT_ITEM:
                     myFullViewPager.setCurrentItem(index);
                     break;
+                case SET_BITMAP_RESOURCE:
+                    setWallPage();
+                    break;
                 default:
                     break;
             }
             return false;
         }
     });
-    private ImageView imageView;
-    private LinearLayout ll_tv_setwallpager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -110,8 +115,9 @@ public class GalleryActivity extends Activity implements View.OnClickListener{
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ll_tv_setwallpager:
-                UIUtils.showToast(this, "设置壁纸");
-                setWallPage();
+                //点击设置壁纸，下载图片到bitmap中
+                getURLImage(images.get( getCurrentItem() ));
+                UIUtils.showToast(this, "壁纸设置成功");
                 break;
             default:
                 break;
@@ -119,36 +125,56 @@ public class GalleryActivity extends Activity implements View.OnClickListener{
     }
 
     /**
-     * 设置壁纸
+     * 获取当前item,即position
+     * @return
+     */
+    private int getCurrentItem() {
+        return myFullViewPager.getCurrentItem();
+    }
+
+    /**
+     * 设置壁纸,在handler中调用
      */
     private void setWallPage() {
         WallpaperManager wallpaperManager = WallpaperManager.getInstance(this);
-        Bitmap bitmap = getURLimage(images.get(2));
         try {
-            wallpaperManager.setBitmap(bitmap);
+            wallpaperManager.setBitmap(bmp);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    //加载图片
-    public Bitmap getURLimage(String url) {
-        Bitmap bmp = null;
-        try {
-            URL myurl = new URL(url);
-            // 获得连接
-            HttpURLConnection conn = (HttpURLConnection) myurl.openConnection();
-            conn.setConnectTimeout(6000);//设置超时
-            conn.setDoInput(true);
-            conn.setUseCaches(false);//不缓存
-            conn.connect();
-            InputStream is = conn.getInputStream();//获得图片的数据流
-            bmp = BitmapFactory.decodeStream(is);
-            is.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return bmp;
+    /**
+     * 点击设置壁纸，下载图片到bitmap中，通过handler通知下载好了
+     * @param url
+     */
+    public void getURLImage(final String url) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Message message = handler.obtainMessage();
+                try {
+                    URL myUrl = new URL(url);
+                    // 获得连接
+                    HttpURLConnection conn = (HttpURLConnection) myUrl.openConnection();
+                    conn.setConnectTimeout(6000);//设置超时
+                    conn.setUseCaches(false);//不缓存
+                    conn.setRequestMethod("GET");
+                    int code = conn.getResponseCode();
+                    if(code == 200) {
+                        InputStream is = conn.getInputStream();//获得图片的数据流
+                        bmp = BitmapFactory.decodeStream(is);
+                        message.what = SET_BITMAP_RESOURCE;
+                        handler.sendMessage(message);
+                        is.close();
+                    } else {
+                        UIUtils.showToast(GalleryActivity.this, "网络错误");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     /**

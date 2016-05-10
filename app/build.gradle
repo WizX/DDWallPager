@@ -17,6 +17,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    useLibrary 'org.apache.http.legacy'
 }
 
 dependencies {
@@ -26,6 +27,12 @@ dependencies {
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'org.xutils:xutils:3.3.34'
     compile 'com.google.code.gson:gson:2.6.2'
-    compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.loopj.android:android-async-http:1.4.6'
+    compile files('libs/showapi_sdk_android.jar')
+    compile 'com.squareup.retrofit2:retrofit:2.0.2'
+    compile 'com.squareup.retrofit2:converter-gson:2.0.2'
+    compile 'com.squareup.okhttp3:okhttp:3.2.0'
+    provided 'org.glassfish:javax.annotation:10.0-b28'
 }

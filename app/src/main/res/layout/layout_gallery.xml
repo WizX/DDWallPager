@@ -12,7 +12,6 @@
 
 
     <LinearLayout
-        android:id="@+id/ll_tv_setwallpager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -20,6 +19,7 @@
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/ll_tv_setwallpager"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -56,7 +56,6 @@
                     android:src="@mipmap/image_view_button_preview" />
 
                 <TextView
-
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="预览"

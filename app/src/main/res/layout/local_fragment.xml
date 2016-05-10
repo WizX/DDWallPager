@@ -58,5 +58,11 @@
             android:text="精选"
             android:textColor="#fff" />
 
+        <Button
+            android:id="@+id/btn_image"
+            android:text="跳转到图片下载"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
     </LinearLayout>
 </LinearLayout>
