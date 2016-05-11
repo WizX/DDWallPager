@@ -1,17 +1,22 @@
 
 package com.buaa.yyg.baidupager.domain;
 
-import java.util.HashMap;
-import java.util.Map;
 import javax.annotation.Generated;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 @Generated("org.jsonschema2pojo")
 public class ShowapiResBody {
 
+    @SerializedName("currentPage")
+    @Expose
     private int currentPage;
+    @SerializedName("pagebean")
+    @Expose
     private Pagebean pagebean;
+    @SerializedName("ret_code")
+    @Expose
     private int retCode;
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
      * 
@@ -65,14 +70,6 @@ public class ShowapiResBody {
      */
     public void setRetCode(int retCode) {
         this.retCode = retCode;
-    }
-
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
     }
 
 }

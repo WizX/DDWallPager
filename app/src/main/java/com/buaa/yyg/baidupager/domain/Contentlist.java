@@ -1,18 +1,26 @@
 
 package com.buaa.yyg.baidupager.domain;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import javax.annotation.Generated;
 
 @Generated("org.jsonschema2pojo")
 public class Contentlist {
 
+    @SerializedName("id")
+    @Expose
     private String id;
+    @SerializedName("img")
+    @Expose
     private String img;
+    @SerializedName("link")
+    @Expose
     private String link;
+    @SerializedName("title")
+    @Expose
     private String title;
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
      * 
@@ -84,14 +92,6 @@ public class Contentlist {
      */
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
     }
 
 }

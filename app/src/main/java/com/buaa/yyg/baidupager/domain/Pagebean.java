@@ -2,17 +2,20 @@
 package com.buaa.yyg.baidupager.domain;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.annotation.Generated;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 @Generated("org.jsonschema2pojo")
 public class Pagebean {
 
+    @SerializedName("contentlist")
+    @Expose
     private List<Contentlist> contentlist = new ArrayList<Contentlist>();
+    @SerializedName("maxResult")
+    @Expose
     private String maxResult;
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
      * 
@@ -48,14 +51,6 @@ public class Pagebean {
      */
     public void setMaxResult(String maxResult) {
         this.maxResult = maxResult;
-    }
-
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
     }
 
 }

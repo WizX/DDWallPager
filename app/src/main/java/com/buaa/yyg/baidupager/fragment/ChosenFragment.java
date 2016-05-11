@@ -208,6 +208,7 @@ public class ChosenFragment extends Fragment {
                     .placeholder(R.mipmap.chosen1)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .thumbnail(1)
+                    .crossFade()
                     .into((ImageView) convertView);
             return convertView;
         }

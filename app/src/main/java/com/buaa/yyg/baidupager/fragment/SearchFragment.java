@@ -216,7 +216,7 @@ public class SearchFragment extends Fragment {
                     newDataOne.add("动漫壁纸");
                     newDataOne.add("人物壁纸");
                     newDataOne.add("壁纸");
-                    newDataOne.add("比基尼美女");
+                    newDataOne.add("比基尼");
                     newDataOne.add("制服美女");
                     newDataOne.add("写真艺术");
                     newDataOne.add("性格美女");
@@ -231,7 +231,7 @@ public class SearchFragment extends Fragment {
                     break;
                 case 1:
                     ArrayList<String> newDataTwo = new ArrayList<>();
-                    newDataTwo.add("美女性感图片");
+                    newDataTwo.add("性感美女");
                     newDataTwo.add("美女模特");
                     newDataTwo.add("丝袜美女");
                     newDataTwo.add("裙装美女");
@@ -325,7 +325,7 @@ public class SearchFragment extends Fragment {
             type = "rwbz";
         } else if (text == "壁纸") {
             type = "bz";
-        } else if (text == "比基尼美女") {
+        } else if (text == "比基尼") {
             type = "bijini";
         } else if (text == "制服美女") {
             type = "zhifu";
@@ -343,7 +343,7 @@ public class SearchFragment extends Fragment {
             type = "wxtx";
         } else if (text == "av女演员") {
             type = "av";
-        } else if (text == "美女性感图片") {
+        } else if (text == "性感美女") {
             type = "xinggan";
         } else if (text == "美女模特") {
             type = "mote";

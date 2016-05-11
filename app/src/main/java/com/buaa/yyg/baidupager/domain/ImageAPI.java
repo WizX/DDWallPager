@@ -1,17 +1,22 @@
 
 package com.buaa.yyg.baidupager.domain;
 
-import java.util.HashMap;
-import java.util.Map;
 import javax.annotation.Generated;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 @Generated("org.jsonschema2pojo")
 public class ImageAPI {
 
+    @SerializedName("showapi_res_code")
+    @Expose
     private int showapiResCode;
+    @SerializedName("showapi_res_error")
+    @Expose
     private String showapiResError;
+    @SerializedName("showapi_res_body")
+    @Expose
     private ShowapiResBody showapiResBody;
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
      * 
@@ -65,14 +70,6 @@ public class ImageAPI {
      */
     public void setShowapiResBody(ShowapiResBody showapiResBody) {
         this.showapiResBody = showapiResBody;
-    }
-
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
     }
 
 }
