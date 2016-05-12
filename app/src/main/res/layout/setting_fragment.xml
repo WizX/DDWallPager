@@ -97,6 +97,29 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/rl_set_search_number"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@mipmap/image_more_subitems_bottom"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="搜索显示数量" />
+
+        <TextView
+            android:id="@+id/tv_set_search_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:text="15" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@mipmap/image_more_subitems_bottom"

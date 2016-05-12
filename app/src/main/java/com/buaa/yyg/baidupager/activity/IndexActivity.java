@@ -1,6 +1,7 @@
 package com.buaa.yyg.baidupager.activity;
 
 import android.content.Intent;
+import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.RelativeLayout;
 
@@ -44,8 +45,9 @@ public class IndexActivity extends BaseActivity {
     }
 
     @Override
-    public void progress() {
+    public void progress(View v) {
     }
+
 
     /**
      * 跳转到MainActivity

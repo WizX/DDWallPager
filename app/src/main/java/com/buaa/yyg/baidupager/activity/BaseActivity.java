@@ -21,12 +21,12 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onClick(View v) {
-        progress();
+        progress(v);
     }
 
     public abstract void initView();
     public abstract void initData();
     public abstract void initListener();
-    public abstract void progress();
+    public abstract void progress(View v);
 
 }

@@ -8,23 +8,23 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.buaa.yyg.baidupager.R;
-import com.buaa.yyg.baidupager.domain.Contentlist;
+import com.buaa.yyg.baidupager.domain.Value;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by yyg on 2016/5/11.
  */
 public class MySearchImageAdapter extends RecyclerView.Adapter<MySearchImageAdapter.Holder>{
-    private List<Contentlist> image;
+    private List<Value> image = new ArrayList<>();
     private Context context;
     private onItemClickListener listener;
 
-    public MySearchImageAdapter(Context context, List<Contentlist> image) {
+    public MySearchImageAdapter(Context context) {
         this.context = context;
-        this.image = image;
     }
 
     @Override
@@ -36,8 +36,9 @@ public class MySearchImageAdapter extends RecyclerView.Adapter<MySearchImageAdap
     @Override
     public void onBindViewHolder(final Holder holder, int position) {
         Glide.with(context)
-                .load(image.get(position).getImg())
+                .load(image.get(position).getContentUrl())
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .skipMemoryCache(true)
                 .crossFade()
                 .into(holder.imageView);
 
@@ -62,7 +63,10 @@ public class MySearchImageAdapter extends RecyclerView.Adapter<MySearchImageAdap
 
     @Override
     public int getItemCount() {
-        return image.size();
+        if (image != null) {
+            return image.size();
+        }
+        return 0;
     }
 
     public static class Holder extends RecyclerView.ViewHolder{
@@ -74,6 +78,21 @@ public class MySearchImageAdapter extends RecyclerView.Adapter<MySearchImageAdap
             imageView = (ImageView) itemView.findViewById(R.id.iv_search_image_item);
         }
 
+    }
+
+    public void addMoreItem(List<Value> imageUrl) {
+        image.addAll(imageUrl);
+
+//        imageUrl.addAll(image);
+//        image.removeAll(image);
+//        image.addAll(imageUrl);
+
+        notifyDataSetChanged();
+    }
+
+    public void addTopItem(List<Value> imageUrl) {
+        image.addAll(0, imageUrl);
+        notifyDataSetChanged();
     }
 
     public interface onItemClickListener {

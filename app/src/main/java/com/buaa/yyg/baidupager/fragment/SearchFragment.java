@@ -97,6 +97,7 @@ public class SearchFragment extends Fragment {
     };
     private EditText et_search;
     private ImageView iv_search;
+    private TextView tv_search_confirm;
 
 
     /**
@@ -176,6 +177,7 @@ public class SearchFragment extends Fragment {
 
         et_search = (EditText) view.findViewById(R.id.et_search);
         iv_search = (ImageView) view.findViewById(R.id.iv_search);
+        tv_search_confirm = (TextView) view.findViewById(R.id.tv_search_confirm);
         myLayoutOne = (AbsoluteLayout) view.findViewById(R.id.myLayoutOne);
         myLayoutTwo = (AbsoluteLayout) view.findViewById(R.id.myLayoutTwo);
     }
@@ -224,7 +226,7 @@ public class SearchFragment extends Fragment {
                     newDataOne.add("美女头像");
                     newDataOne.add("QQ头像");
                     newDataOne.add("微信头像");
-                    newDataOne.add("av女演员");
+                    newDataOne.add("女演员");
 
                     //添加数据
                     data.add(newDataOne);
@@ -284,7 +286,7 @@ public class SearchFragment extends Fragment {
                     et_search.setText(tv.getText());
                     et_search.setSelection(tv.getText().length());
                     //跳转到显示图片activity
-                    startActivityNotFinish(tv.getText());
+                    startActivityNotFinish(tv.getText().toString());
                 }
             });
 
@@ -301,73 +303,16 @@ public class SearchFragment extends Fragment {
     /**
      * 跳转到显示图片activity
      */
-    private void startActivityNotFinish(CharSequence text) {
+    private void startActivityNotFinish(String text) {
         Intent intent = new Intent(getActivity(), ShowImageActivity.class);
-        String type = getTypeFromText(text);
-        if (!TextUtils.isEmpty(type)) {
-            intent.putExtra("type", type);
+        if (!TextUtils.isEmpty(text)) {
+            intent.putExtra("text", text);
             startActivity(intent);
         } else {
             UIUtils.showToast(getActivity(), "内容不能为空");
         }
     }
 
-    /**
-     * 根据内容text获取type类型，用于调取网络api
-     * @param text
-     * @return
-     */
-    private String getTypeFromText(CharSequence text) {
-        String type = null;
-        if (text == "动漫壁纸") {
-            type = "dmbz";
-        } else if (text == "人物壁纸") {
-            type = "rwbz";
-        } else if (text == "壁纸") {
-            type = "bz";
-        } else if (text == "比基尼") {
-            type = "bijini";
-        } else if (text == "制服美女") {
-            type = "zhifu";
-        } else if (text == "写真艺术") {
-            type = "nvyou";
-        } else if (text == "性格美女") {
-            type = "xingge";
-        } else if (text == "美女车展") {
-            type = "rufang";
-        } else if (text == "美女头像") {
-            type = "meitun";
-        } else if (text == "QQ头像") {
-            type = "qqtx";
-        } else if (text == "微信头像") {
-            type = "wxtx";
-        } else if (text == "av女演员") {
-            type = "av";
-        } else if (text == "性感美女") {
-            type = "xinggan";
-        } else if (text == "美女模特") {
-            type = "mote";
-        } else if (text == "丝袜美女") {
-            type = "siwa";
-        } else if (text == "裙装美女") {
-            type = "qunzhuang";
-        } else if (text == "美女照片") {
-            type = "meinv";
-        } else if (text == "情趣美女") {
-            type = "qingqu";
-        } else if (text == "美食图片") {
-            type = "meishi";
-        } else if (text == "纹身图片") {
-            type = "wenshen";
-        } else if (text == "动物图片") {
-            type = "dongwu";
-        } else if (text == "影视剧照") {
-            type = "yingshi";
-        } else if (text == "自拍艺术") {
-            type = "tpzp";
-        }
-        return type;
-    }
 
     /**
      * 随机生成一个坐标
@@ -386,6 +331,13 @@ public class SearchFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 et_search.setText("");
+            }
+        });
+        tv_search_confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //跳转到显示图片activity
+                startActivityNotFinish(et_search.getText().toString());
             }
         });
     }

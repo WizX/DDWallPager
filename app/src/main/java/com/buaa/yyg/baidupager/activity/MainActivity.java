@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.View;
 
 import com.buaa.yyg.baidupager.R;
 import com.buaa.yyg.baidupager.fragment.ChosenFragment;
@@ -69,6 +70,11 @@ public class MainActivity extends BaseActivity {
         });
     }
 
+    @Override
+    public void progress(View v) {
+
+    }
+
     /**
      * 实现回调监听方法，用于改变当前item值
      * 在FragmentPagerAdapter的getItem方法中切换Fragment
@@ -128,9 +134,5 @@ public class MainActivity extends BaseActivity {
             //一共5个页面
             return 5;
         }
-    }
-
-    @Override
-    public void progress() {
     }
 }
