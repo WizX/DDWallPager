@@ -1,7 +1,6 @@
 package com.buaa.yyg.baidupager.activity;
 
 import android.content.Intent;
-import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -16,11 +15,12 @@ import com.buaa.yyg.baidupager.R;
 import com.buaa.yyg.baidupager.domain.APIImage;
 import com.buaa.yyg.baidupager.domain.Value;
 import com.buaa.yyg.baidupager.global.Constant;
+import com.buaa.yyg.baidupager.recyclerview.BottomRecyclerOnScrollListener;
+import com.buaa.yyg.baidupager.recyclerview.RecyclerRefreshHeaderAdapter;
+import com.buaa.yyg.baidupager.recyclerview.SpacesItemDecoration;
 import com.buaa.yyg.baidupager.utils.UIUtils;
-import com.buaa.yyg.baidupager.view.MySearchImageAdapter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -45,14 +45,15 @@ public class ShowImageActivity extends BaseActivity {
     private static final int SHOW_IMAGES_URL_MORE = 0;
     private static final int SHOW_IMAGES_URL_TOP = 1;
     private String text;
-    private List<Value> imageUrl = new ArrayList<>(); // 图片集合
+    private List<Value> imageUrl; // 图片集合
     private RecyclerView recyclerView;
-    private MySearchImageAdapter adapter;
+    private RecyclerRefreshHeaderAdapter adapter;
     private TextView tv_search_text;
     private TextView tv_change_other;
     private MyApiTypeEndpointInterface apiService;
     private SwipeRefreshLayout swipe_refresh_showimage;
-    private static boolean Tag = false;
+    private static boolean flag = false;
+    public int lastVisibleItemPosition;
 
     private Handler handler = new Handler(new Handler.Callback() {
 
@@ -62,15 +63,19 @@ public class ShowImageActivity extends BaseActivity {
                 case SHOW_IMAGES_URL_MORE:
                     //取得图片集合,添加到集合尾部
                     if (adapter != null) {
-                        adapter.addMoreItem(imageUrl);
+                        adapter.addMoreItem(imageUrl, lastVisibleItemPosition);
+                        Log.d(TAG, "adapter: " + adapter.toString());
                     }
+                    DelayCloseSwipeRefresh(1500);
                     break;
                 case SHOW_IMAGES_URL_TOP:
                     //取得图片集合,添加到集合顶部
                     if (adapter != null) {
                         adapter.addTopItem(imageUrl);
+                        Log.d(TAG, "adapter: " + adapter.toString());
                     }
-                    Tag = false;
+                    flag = false;
+                    DelayCloseSwipeRefresh(1500);
                     break;
                 default:
                     break;
@@ -78,6 +83,7 @@ public class ShowImageActivity extends BaseActivity {
             return false;
         }
     });
+    private StaggeredGridLayoutManager staggeredGridLayoutManager;
 
     @Override
     public void initView() {
@@ -108,41 +114,48 @@ public class ShowImageActivity extends BaseActivity {
 
     @Override
     public void initListener() {
+
+        //点击刷新实现的下拉刷新
         tv_change_other.setOnClickListener(this);
 
-        //下拉刷新
+        //swipe_refresh实现的下拉刷新
         swipe_refresh_showimage.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 Log.d(TAG, "onRefresh: 刷新中。。。");
 
-                //在请求数据回来后使集合添加到顶部
-                Tag = true;
-                getJsonObjectUseRetrofit();
-
-                //进度条刷新3秒
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        swipe_refresh_showimage.setRefreshing(false);
-                    }
-                }, 3000);
+                //设置下拉刷新动作
+                swipe_refresh();
             }
         });
 
-        adapter.setOnClickListener(new MySearchImageAdapter.onItemClickListener() {
+        //recyclerView的点击侦听，单击和双击
+        adapter.setOnClickListener(new RecyclerRefreshHeaderAdapter.onItemClickListener() {
             @Override
             public void ItemClickListener(View view, int position) {
-                //单击
-                UIUtils.showToast(ShowImageActivity.this, "点击了" + position);
-
+                Intent intent = new Intent(ShowImageActivity.this, GalleryRecycleActivity.class);
+                intent.putStringArrayListExtra("image", adapter.getAllImage());
+                intent.putExtra("position", position);
+                startActivity(intent);
             }
 
             @Override
             public void ItemLongClickListener(View view, int position) {
                 //长按删除
-                imageUrl.remove(position);
-                adapter.notifyItemRemoved(position);
+                //imageUrl.size()是固定的，所以不能在这里直接remove，需要在adapter中remove
+                adapter.removeItem(position);
+            }
+        });
+
+        //recyclerView滑动监听，用于判断是否到底部，作用于上拉刷新
+        recyclerView.addOnScrollListener(new BottomRecyclerOnScrollListener(staggeredGridLayoutManager) {
+            @Override
+            public void onBottomLoadMore(int lastVisibleItemPosition) {
+                getJsonObjectUseRetrofit();
+                //显示swipe自带的刷新栏
+                swipe_refresh_showimage.setRefreshing(true);
+
+                ShowImageActivity.this.lastVisibleItemPosition = lastVisibleItemPosition;
             }
         });
     }
@@ -151,11 +164,25 @@ public class ShowImageActivity extends BaseActivity {
     public void progress(View v) {
         switch (v.getId()) {
             case R.id.tv_change_other:
-                getJsonObjectUseRetrofit();
+                //显示刷新进度条
+                swipe_refresh_showimage.setRefreshing(true);
+                //添加数据
+                swipe_refresh();
                 break;
             default:
                 break;
         }
+    }
+
+    /**
+     * 设置下拉刷新动作
+     */
+    private void swipe_refresh() {
+
+        //在请求数据回来后使集合添加到顶部
+        flag = true;
+        getJsonObjectUseRetrofit();
+
     }
 
     /**
@@ -172,29 +199,43 @@ public class ShowImageActivity extends BaseActivity {
         swipe_refresh_showimage.setProgressViewOffset(false, 0, (int) TypedValue
             .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()));
 
+        //设置第一次进入显示进度条
+        swipe_refresh_showimage.setRefreshing(true);
+    }
+
+    /**
+     * 设置刷新进度条
+     */
+    private void DelayCloseSwipeRefresh(int millisecond) {
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+               swipe_refresh_showimage.setRefreshing(false);
+            }
+        }, millisecond);
     }
 
     /**
      * 设置recycleData,注意adapter设置在handler中
      */
     private void setRecyclerData() {
-        // 得到图片集合
-        // 设置recycler中的adapter
-        adapter = new MySearchImageAdapter(ShowImageActivity.this);
-        Log.d(TAG, "adapter: " + adapter.toString());
 
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        // setLayoutManager() 方法要在setAdapter()方法之前调用。不然会出问题
+        staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(staggeredGridLayoutManager);
 
         //设置item之间的间隔
         SpacesItemDecoration decoration = new SpacesItemDecoration(8);
         recyclerView.addItemDecoration(decoration);
 
+        // 设置recycler中的adapter
+        adapter = new RecyclerRefreshHeaderAdapter(ShowImageActivity.this);
+        recyclerView.setAdapter(adapter);
     }
 
     /**
      * 根据text获得图片列表
-     * https://bingapis.azure-api.net/api/v5/images/search[?q][&count][&offset][&mkt][&safeSearch]
      * https://bingapis.azure-api.net/api/v5/images/search?q=美女&count=10&offset=0&mkt=zh-CN
      * Headers:5cf2bca526bc48308659bb75e384377c
      */
@@ -215,6 +256,7 @@ public class ShowImageActivity extends BaseActivity {
             OkHttpClient client =  new OkHttpClient.Builder()
                     .addInterceptor(interceptor)
                     .connectTimeout(5, TimeUnit.SECONDS)
+                    .readTimeout(5, TimeUnit.SECONDS)
                     .build();
 
             String BASE_URL = "https://bingapis.azure-api.net/api/v5/images/";
@@ -241,8 +283,9 @@ public class ShowImageActivity extends BaseActivity {
                         if (imageAPI.getValue().size() != 0) {
                             //成功返回内容
                             imageUrl = imageAPI.getValue();
+
                             handler.sendEmptyMessage(SHOW_IMAGES_URL_MORE);
-                            if (Tag) {
+                            if (flag) {
                                 handler.sendEmptyMessage(SHOW_IMAGES_URL_TOP);
                             }
 
@@ -262,7 +305,11 @@ public class ShowImageActivity extends BaseActivity {
             public void onFailure(Call<APIImage > call, Throwable t) {
                 Log.e(TAG, "onFailure: " + t.getMessage() );
                 UIUtils.showToast(ShowImageActivity.this, "网络错误，请稍后再试");
-                finish();
+                swipe_refresh_showimage.setRefreshing(false);
+                //第一次请求失败退出activity
+                if (imageUrl == null) {
+                    finish();
+                }
             }
         });
     }
@@ -276,53 +323,6 @@ public class ShowImageActivity extends BaseActivity {
                                 @Query("mkt") String mkt);
     }
 
-}
-
-
-class SpacesItemDecoration extends RecyclerView.ItemDecoration {
-
-    private int space;
-    private StaggeredGridLayoutManager.LayoutParams lp;
-
-    public SpacesItemDecoration(int space) {
-        this.space = space;
-    }
-
-    @Override
-    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-
-        int position = parent.getChildAdapterPosition(view);
-        lp = (StaggeredGridLayoutManager.LayoutParams)view.getLayoutParams();
-
-        if (position == 0 || position==1){
-            outRect.top = space * 2;
-        } else {
-            outRect.top = space;
-        }
-
-        if (lp.getSpanIndex() == 0) {
-            outRect.left = space * 2;
-            outRect.right = space;
-        } else {
-            outRect.left = space;
-            outRect.right = space * 2;
-        }
-        outRect.bottom = space;
-
-            /*    //注掉的方法总有漏网之鱼，不知为啥
-        outRect.left = space;
-        outRect.right = space;
-        outRect.bottom = space;
-        if (position == 0 || position == 1) {
-            //用于设置第一行跟顶部的距离
-            outRect.top = space;
-        }
-
-        if (lp.getSpanIndex() == 0) {
-            //用于设同行两个间隔间跟其距离左右屏幕间隔相同
-            outRect.right = 0;
-        }*/
-    }
 }
 
 

@@ -1,4 +1,4 @@
-package com.buaa.yyg.baidupager.view;
+package com.buaa.yyg.baidupager.galleryrecycle;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.buaa.yyg.baidupager.R;
-import com.buaa.yyg.baidupager.domain.Value;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
@@ -16,45 +15,47 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by yyg on 2016/5/11.
+ * Created by yyg on 2016/5/13.
  */
-public class MySearchImageAdapter extends RecyclerView.Adapter<MySearchImageAdapter.Holder>{
-    private List<Value> image = new ArrayList<>();
+public class GalleryRecyclerAdapter extends RecyclerView.Adapter<GalleryRecyclerAdapter.ViewHolder>{
+
     private Context context;
+    private List<String> image = new ArrayList<>();
     private onItemClickListener listener;
 
-    public MySearchImageAdapter(Context context) {
+    public GalleryRecyclerAdapter(Context context) {
         this.context = context;
     }
 
     @Override
-    public Holder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_search_image, viewGroup, false);
-        return new Holder(view);
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.item_gallery_recycle, parent, false);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final Holder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         Glide.with(context)
-                .load(image.get(position).getContentUrl())
+                .load(image.get(position))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .skipMemoryCache(true)
                 .crossFade()
-                .into(holder.imageView);
+                .into(holder.img);
 
+        //设置回调监听
         if (listener != null) { //如果设置了监听那么它就不为空，然后回调相应的方法
-            holder.imageView.setOnClickListener(new View.OnClickListener() {
+            holder.img.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int pos = holder.getLayoutPosition(); //得到当前点击item的位置pos
-                    listener.ItemClickListener(holder.imageView, pos); //把事件交给我们实现的接口那里处理
+                    listener.ItemClickListener(holder.img, pos); //把事件交给我们实现的接口那里处理
                 }
             });
-            holder.imageView.setOnLongClickListener(new View.OnLongClickListener() {
+            holder.img.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
                     int pos = holder.getLayoutPosition();
-                    listener.ItemLongClickListener(holder.imageView, pos);
+                    listener.ItemLongClickListener(holder.img, pos);
                     return true;
                 }
             });
@@ -69,32 +70,37 @@ public class MySearchImageAdapter extends RecyclerView.Adapter<MySearchImageAdap
         return 0;
     }
 
-    public static class Holder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView imageView;
+        ImageView img;
 
-        public Holder(View itemView) {
+        public ViewHolder(View itemView) {
             super(itemView);
-            imageView = (ImageView) itemView.findViewById(R.id.iv_search_image_item);
+            img = (ImageView) itemView.findViewById(R.id.id_index_gallery_item_image);
         }
-
     }
 
-    public void addMoreItem(List<Value> imageUrl) {
+    /**
+     * 在原有数据后面添加更多数据
+     * @param imageUrl
+     */
+    public void addItem(List<String> imageUrl, int position) {
         image.addAll(imageUrl);
-
-//        imageUrl.addAll(image);
-//        image.removeAll(image);
-//        image.addAll(imageUrl);
-
         notifyDataSetChanged();
     }
 
-    public void addTopItem(List<Value> imageUrl) {
-        image.addAll(0, imageUrl);
-        notifyDataSetChanged();
+    /**
+     * 移除集合相应位置的元素，用于长按删除
+     * @param position
+     */
+    public void removeItem(int position) {
+        image.remove(position);
+        notifyItemRemoved(position);
     }
 
+    /**
+     * 自定义条目点击侦听，用于单击和长按侦听
+     */
     public interface onItemClickListener {
         void ItemClickListener(View view, int position);
         void ItemLongClickListener(View view, int position);
@@ -103,4 +109,5 @@ public class MySearchImageAdapter extends RecyclerView.Adapter<MySearchImageAdap
     public void setOnClickListener(onItemClickListener listener) {
         this.listener = listener;
     }
+
 }

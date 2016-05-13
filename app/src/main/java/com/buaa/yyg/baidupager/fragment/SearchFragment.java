@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -215,18 +217,22 @@ public class SearchFragment extends Fragment {
                 case 0:
                     //实际开发中数据还是得从服务器获取
                     ArrayList<String> newDataOne = new ArrayList<>();
-                    newDataOne.add("动漫壁纸");
-                    newDataOne.add("人物壁纸");
-                    newDataOne.add("壁纸");
-                    newDataOne.add("比基尼");
+                    newDataOne.add("清纯妹子");
+                    newDataOne.add("自然沙滩");
+                    newDataOne.add("汽车");
+                    newDataOne.add("宠物狗");
+                    newDataOne.add("游戏壁纸");
                     newDataOne.add("制服美女");
-                    newDataOne.add("写真艺术");
+                    newDataOne.add("艺术写真");
+                    newDataOne.add("可爱卡通");
                     newDataOne.add("性格美女");
-                    newDataOne.add("美女车展");
-                    newDataOne.add("美女头像");
-                    newDataOne.add("QQ头像");
-                    newDataOne.add("微信头像");
-                    newDataOne.add("女演员");
+                    newDataOne.add("气质型男");
+                    newDataOne.add("女明星");
+                    newDataOne.add("可爱性感");
+                    newDataOne.add("风景照");
+                    newDataOne.add("足球");
+                    newDataOne.add("兔女郎");
+                    newDataOne.add("国内风光");
 
                     //添加数据
                     data.add(newDataOne);
@@ -235,15 +241,22 @@ public class SearchFragment extends Fragment {
                     ArrayList<String> newDataTwo = new ArrayList<>();
                     newDataTwo.add("性感美女");
                     newDataTwo.add("美女模特");
+                    newDataTwo.add("动漫卡通");
                     newDataTwo.add("丝袜美女");
+                    newDataTwo.add("唯美自然");
                     newDataTwo.add("裙装美女");
                     newDataTwo.add("美女照片");
-                    newDataTwo.add("情趣美女");
-                    newDataTwo.add("美食图片");
-                    newDataTwo.add("纹身图片");
+                    newDataTwo.add("荷塘月色");
+                    newDataTwo.add("泳装女神");
+                    newDataTwo.add("自然夜景");
                     newDataTwo.add("动物图片");
-                    newDataTwo.add("影视剧照");
-                    newDataTwo.add("自拍艺术");
+                    newDataTwo.add("山水画");
+                    newDataTwo.add("艺术云图");
+                    newDataTwo.add("女神范");
+                    newDataTwo.add("可爱美女");
+                    newDataTwo.add("迷人");
+                    newDataTwo.add("日韩美女");
+                    newDataTwo.add("足球宝贝");
                     //添加数据
                     data.add(newDataTwo);
 
@@ -262,7 +275,7 @@ public class SearchFragment extends Fragment {
         //每次加载之前清除
         myLayout.removeAllViews();
         //有数据了之后开始随机分布了
-        int startY = 60;
+        int startY = 10;
         //X动态生成,判断是第几页的数据，左右两边间距50，用户体验
         for (int i = 0; i < data.get(index).size(); i++) {
             int x = get(40, mWidth - 250);
@@ -296,7 +309,7 @@ public class SearchFragment extends Fragment {
             AbsoluteLayout.LayoutParams layout = new AbsoluteLayout.LayoutParams(200, 50, x, y);
             myLayout.addView(tv, layout);
             //开始随机分布
-            startY += 105;
+            startY += 80;
         }
     }
 
@@ -327,12 +340,30 @@ public class SearchFragment extends Fragment {
     }
 
     private void setListener() {
+        //输入框
+        et_search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                iv_search.setVisibility(View.VISIBLE);
+            }
+        });
+
         iv_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 et_search.setText("");
+                iv_search.setVisibility(View.GONE);
             }
         });
+
         tv_search_confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

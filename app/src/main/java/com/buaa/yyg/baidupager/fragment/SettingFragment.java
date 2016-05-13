@@ -85,8 +85,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener{
     });
     private String versionNameClient;
     private TextView tv_version_name;
-    private RelativeLayout rl_set_search_number;
-    private TextView tv_set_search_number;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -104,8 +102,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener{
     private void findView() {
         tv_check_version = (RelativeLayout) view.findViewById(R.id.tv_check_version);
         tv_version_name = (TextView) view.findViewById(R.id.tv_version_name);
-        rl_set_search_number = (RelativeLayout) view.findViewById(R.id.rl_set_search_number);
-        tv_set_search_number = (TextView) view.findViewById(R.id.tv_set_search_number);
     }
 
     private void init() {
