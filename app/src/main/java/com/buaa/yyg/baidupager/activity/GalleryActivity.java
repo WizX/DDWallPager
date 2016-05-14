@@ -12,6 +12,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -201,6 +202,8 @@ public class GalleryActivity extends Activity implements View.OnClickListener{
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             imageView = new ImageView(GalleryActivity.this);
+            imageView.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, AbsListView.LayoutParams.MATCH_PARENT));
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             container.addView(imageView);
 
             Glide.with(GalleryActivity.this)

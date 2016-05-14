@@ -23,4 +23,6 @@ public class Constant {
      * 搜索请求时的国家
      */
     public static String ZH_CN = "zh-CN";
+
+
 }

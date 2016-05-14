@@ -1,5 +1,6 @@
 package com.buaa.yyg.baidupager.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
@@ -7,10 +8,12 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.buaa.yyg.baidupager.R;
+import com.buaa.yyg.baidupager.activity.HomeImageActivity;
 import com.buaa.yyg.baidupager.adapter.GridViewAdapter;
 import com.buaa.yyg.baidupager.domain.HomeGrid;
 import com.buaa.yyg.baidupager.global.Constant;
@@ -37,6 +40,7 @@ public class HomeFragment extends Fragment {
     private DisGridView mGridView;
     private DisScrollView disScroolView;
     private RelativeLayout rl_top;
+    private HomeGrid grid;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -49,6 +53,7 @@ public class HomeFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         init();
+        initListener();
     }
 
     /**
@@ -96,16 +101,69 @@ public class HomeFragment extends Fragment {
         rl_top.requestFocus();
     }
 
+    private void initListener() {
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(), HomeImageActivity.class);
+                intent.putExtra("index", position);
+                startActivity(intent);
+            }
+        });
+    }
+
     /**
      * 初始化GridView的数据
      */
     private void initGridData() {
-        for (int i = 0; i < 10; i++) {
-            HomeGrid grid = new HomeGrid();
-            grid.setImg(R.mipmap.nice);
-            grid.setType("美女");
-            gridData.add(grid);
-        }
+
+        //1
+        grid = new HomeGrid();
+        grid.setImg(R.mipmap.nice);
+        grid.setType("最新美女");
+        gridData.add(grid);
+
+        //2
+        grid = new HomeGrid();
+        grid.setImg(R.mipmap.nice);
+        grid.setType("性感美女");
+        gridData.add(grid);
+
+        //3
+        grid = new HomeGrid();
+        grid.setImg(R.mipmap.nice);
+        grid.setType("韩日美女");
+        gridData.add(grid);
+
+        //4
+        grid = new HomeGrid();
+        grid.setImg(R.mipmap.nice);
+        grid.setType("丝袜美腿");
+        gridData.add(grid);
+
+        //5
+        grid = new HomeGrid();
+        grid.setImg(R.mipmap.nice);
+        grid.setType("美女照片");
+        gridData.add(grid);
+
+        //6
+        grid = new HomeGrid();
+        grid.setImg(R.mipmap.nice);
+        grid.setType("美女写真");
+        gridData.add(grid);
+
+        //7
+        grid = new HomeGrid();
+        grid.setImg(R.mipmap.nice);
+        grid.setType("清纯美女");
+        gridData.add(grid);
+
+        //8
+        grid = new HomeGrid();
+        grid.setImg(R.mipmap.nice);
+        grid.setType("性感车模");
+        gridData.add(grid);
     }
 
     /**

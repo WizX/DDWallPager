@@ -24,7 +24,7 @@
         <activity android:name=".activity.GalleryActivity"/>
         <activity android:name=".activity.MainActivity"/>
         <activity android:name=".activity.ShowImageActivity"/>
-        <activity android:name=".activity.GalleryRecycleActivity"/>
+        <activity android:name=".activity.HomeImageActivity"/>
 
         <!--<service android:name=".service.WallPaperService"/>-->
     </application>

@@ -12,22 +12,17 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.buaa.yyg.baidupager.R;
-import com.buaa.yyg.baidupager.domain.APIImage;
-import com.buaa.yyg.baidupager.domain.Value;
-import com.buaa.yyg.baidupager.global.Constant;
+import com.buaa.yyg.baidupager.domain.TnGouImageList;
+import com.buaa.yyg.baidupager.domain.Tngou;
+import com.buaa.yyg.baidupager.global.TnGou;
 import com.buaa.yyg.baidupager.recyclerview.BottomRecyclerOnScrollListener;
-import com.buaa.yyg.baidupager.recyclerview.RecyclerRefreshHeaderAdapter;
+import com.buaa.yyg.baidupager.recyclerview.HomeRecyclerRefreshHeaderAdapter;
 import com.buaa.yyg.baidupager.recyclerview.SpacesItemDecoration;
 import com.buaa.yyg.baidupager.utils.UIUtils;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -39,18 +34,18 @@ import retrofit2.http.Query;
 /**
  * Created by yyg on 2016/5/10.
  */
-public class ShowImageActivity extends BaseActivity {
+public class HomeImageActivity extends BaseActivity {
 
-    private static final String TAG = "ShowImageActivity";
+    private static final String TAG = "HomeImageActivity";
     private static final int SHOW_IMAGES_URL_MORE = 0;
     private static final int SHOW_IMAGES_URL_TOP = 1;
-    private String text;
-    private List<Value> imageUrl; // 图片集合
+    private int index;
+    private List<Tngou> imageUrl; // 图片集合
     private RecyclerView recyclerView;
-    private RecyclerRefreshHeaderAdapter adapter;
+    private HomeRecyclerRefreshHeaderAdapter adapter;
     private TextView tv_search_text;
     private TextView tv_change_other;
-    private MyApiTypeEndpointInterface apiService;
+    private MyApiListEndpointInterface apiService;
     private SwipeRefreshLayout swipe_refresh_showimage;
     private static boolean flag = false;
     public int lastVisibleItemPosition;
@@ -99,8 +94,8 @@ public class ShowImageActivity extends BaseActivity {
     @Override
     public void initData() {
         Intent intent = getIntent();
-        text = intent.getStringExtra("text");
-        tv_search_text.setText(text);
+        index = intent.getIntExtra("index", 0);
+        tv_search_text.setText(getTextFromIndex(index));
 
         //text传递过来之前已经做过判断
         getJsonObjectUseRetrofit();
@@ -130,10 +125,10 @@ public class ShowImageActivity extends BaseActivity {
         });
 
         //recyclerView的点击侦听，单击和双击
-        adapter.setOnClickListener(new RecyclerRefreshHeaderAdapter.onItemClickListener() {
+        adapter.setOnClickListener(new HomeRecyclerRefreshHeaderAdapter.onItemClickListener() {
             @Override
             public void ItemClickListener(View view, int position) {
-                Intent intent = new Intent(ShowImageActivity.this, GalleryActivity.class);
+                Intent intent = new Intent(HomeImageActivity.this, GalleryActivity.class);
                 intent.putStringArrayListExtra("images", adapter.getAllImage());
                 intent.putExtra("position", position);
                 startActivity(intent);
@@ -155,7 +150,7 @@ public class ShowImageActivity extends BaseActivity {
                 //显示swipe自带的刷新栏
                 swipe_refresh_showimage.setRefreshing(true);
 
-                ShowImageActivity.this.lastVisibleItemPosition = lastVisibleItemPosition;
+                HomeImageActivity.this.lastVisibleItemPosition = lastVisibleItemPosition;
             }
         });
     }
@@ -172,6 +167,39 @@ public class ShowImageActivity extends BaseActivity {
             default:
                 break;
         }
+    }
+
+    public String getTextFromIndex(int index) {
+        String text = null;
+        switch (index) {
+            case 0:
+                text = "最新美女";
+                break;
+            case 1:
+                text = "性感美女";
+                break;
+            case 2:
+                text = "韩日美女";
+                break;
+            case 3:
+                text = "丝袜美腿";
+                break;
+            case 4:
+                text = "美女照片";
+                break;
+            case 5:
+                text = "美女写真";
+                break;
+            case 6:
+                text = "清纯美女";
+                break;
+            case 7:
+                text = "性感车模";
+                break;
+            default:
+                break;
+        }
+        return text;
     }
 
     /**
@@ -230,97 +258,90 @@ public class ShowImageActivity extends BaseActivity {
         recyclerView.addItemDecoration(decoration);
 
         // 设置recycler中的adapter
-        adapter = new RecyclerRefreshHeaderAdapter(ShowImageActivity.this);
+        adapter = new HomeRecyclerRefreshHeaderAdapter(HomeImageActivity.this);
         recyclerView.setAdapter(adapter);
     }
 
     /**
-     * 根据text获得图片列表
-     * https://bingapis.azure-api.net/api/v5/images/search?q=美女&count=10&offset=0&mkt=zh-CN
-     * Headers:5cf2bca526bc48308659bb75e384377c
+     * 根据index获得图片列表
+     * http://www.tngou.net/tnfs/api/list?id=2&page=2&rows=20
      */
     private void getJsonObjectUseRetrofit() {
 
-        //第二次运行(换一组功能)时不需要重新创建
-        if (apiService == null) {
-            //定义拦截器，添加headers
-            Interceptor interceptor = new Interceptor() {
+        //图片列表
+        if (index > 0) {
+
+            //第二次运行(换一组功能)时不需要重新创建
+            if (apiService == null) {
+
+                String BASE_URL = "http://www.tngou.net/tnfs/api/";
+                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl(BASE_URL)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
+
+                apiService = retrofit.create(MyApiListEndpointInterface.class);
+            }
+            int random = new Random().nextInt(3) + 1;
+            Log.d(TAG, "random: " + random);
+            Call<TnGouImageList> apiResponse = apiService.getImage(index, random, TnGou.LIST_ROWS);
+            apiResponse.enqueue(new Callback<TnGouImageList>() {
                 @Override
-                public okhttp3.Response intercept(Chain chain) throws IOException {
-                    Request newRequest = chain.request().newBuilder().addHeader("Ocp-Apim-Subscription-Key", Constant.HEADERS_SEARCH).build();
-                    return chain.proceed(newRequest);
-                }
-            };
+                public void onResponse(Call<TnGouImageList > call, Response<TnGouImageList > response) {
+                    if (response.isSuccessful()) {
+                        TnGouImageList imageList = response.body();
+                        Log.d(TAG, "onResponse: 传过来的index :  " + index);
+                        if (imageList != null) {
+                            //请求成功
+                            Log.d(TAG, "onResponse: " + "请求成功");
+                            Log.d(TAG, "imageList.getTotal(): " + imageList.getTotal());
+                            Log.d(TAG, "imageList: " + imageList);
+                            Log.d(TAG, "imageList.toString(): " + imageList.toString());
 
-            //添加拦截器到okhttpclient
-            OkHttpClient client =  new OkHttpClient.Builder()
-                    .addInterceptor(interceptor)
-                    .connectTimeout(5, TimeUnit.SECONDS)
-                    .readTimeout(5, TimeUnit.SECONDS)
-                    .build();
+                            if (imageList.getTngou().size() != 0) {
+                                //成功返回内容
+                                imageUrl = imageList.getTngou();
 
-            String BASE_URL = "https://bingapis.azure-api.net/api/v5/images/";
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .client(client)
-                    .build();
+                                handler.sendEmptyMessage(SHOW_IMAGES_URL_MORE);
+                                if (flag) {
+                                    handler.sendEmptyMessage(SHOW_IMAGES_URL_TOP);
+                                }
 
-            apiService = retrofit.create(MyApiTypeEndpointInterface.class);
-        }
-
-        Call<APIImage> apiResponse = apiService.getImage(text, Constant.COUNT_SEARCH, new Random().nextInt(100) + 1, Constant.ZH_CN);
-        apiResponse.enqueue(new Callback<APIImage >() {
-            @Override
-            public void onResponse(Call<APIImage > call, Response<APIImage > response) {
-                if (response.isSuccessful()) {
-                    APIImage imageAPI = response.body();
-                    Log.d(TAG, "onResponse: 传过来的text :  " + text);
-                    if (imageAPI != null) {
-                        //请求成功
-                        Log.d(TAG, "onResponse: " + "请求成功");
-                       
-                        if (imageAPI.getValue().size() != 0) {
-                            //成功返回内容
-                            imageUrl = imageAPI.getValue();
-
-                            handler.sendEmptyMessage(SHOW_IMAGES_URL_MORE);
-                            if (flag) {
-                                handler.sendEmptyMessage(SHOW_IMAGES_URL_TOP);
+                                Log.d(TAG, "getContentUrl: " + imageList.getTngou().get(2).getImg());
+                                Log.d(TAG, "onResponse: imagesUrl = " + imageUrl.size());
+                            } else {
+                                UIUtils.showToast(HomeImageActivity.this, "获取数据失败");
+                                finish();
                             }
-
-                            Log.d(TAG, "getContentUrl: " + imageAPI.getValue().get(2).getContentUrl());
-                            Log.d(TAG, "onResponse: imagesUrl = " + imageUrl.size());
-                        } else {
-                            UIUtils.showToast(ShowImageActivity.this, "内容不存在，请重新输入");
-                            finish();
                         }
                     }
+
+                    Log.e(TAG, "onResponse: " + response.errorBody());
                 }
 
-//                Log.e(TAG, "onResponse: " + response.errorBody());
-            }
-
-            @Override
-            public void onFailure(Call<APIImage > call, Throwable t) {
-                Log.e(TAG, "onFailure: " + t.getMessage() );
-                UIUtils.showToast(ShowImageActivity.this, "网络错误，请稍后再试");
-                swipe_refresh_showimage.setRefreshing(false);
-                //第一次请求失败退出activity
-                if (imageUrl == null) {
-                    finish();
+                @Override
+                public void onFailure(Call<TnGouImageList > call, Throwable t) {
+                    Log.e(TAG, "onFailure: " + t.getMessage() );
+                    UIUtils.showToast(HomeImageActivity.this, "网络错误，请稍后再试");
+                    swipe_refresh_showimage.setRefreshing(false);
+                    //第一次请求失败退出activity
+                    if (imageUrl == null) {
+                        finish();
+                    }
                 }
-            }
-        });
+            });
+        } else if(index == 0) {
+            //最新图片
+
+        }
     }
 
-    //search?q=美女&count=10&offset=0&mkt=zh-CN
-    public interface MyApiTypeEndpointInterface {
-        @GET("search")
-        Call<APIImage> getImage(@Query("q") String q,
-                                @Query("count") int count,
-                                @Query("offset") int offset,
-                                @Query("mkt") String mkt);
+    //list?id=2&page=2&rows=20
+    public interface MyApiListEndpointInterface {
+        @GET("list")
+        Call<TnGouImageList> getImage(@Query("id") int id,
+                                      @Query("page") int page,
+                                      @Query("rows") int rows);
     }
 
 }
