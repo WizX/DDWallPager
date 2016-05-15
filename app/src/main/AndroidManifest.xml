@@ -6,6 +6,9 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name = "android.permission.SET_WALLPAPER"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
         android:name=".application.MyApplication"
@@ -21,10 +24,22 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <!--友盟接口-->
+        <activity
+            android:name="com.umeng.fb.ConversationActivity"/>
+        <meta-data
+            android:value="5738653ce0f55af5e2000c62"
+            android:name="UMENG_APPKEY"/>
+        <meta-data
+            android:value="Channel ID"
+            android:name="UMENG_CHANNEL"/>
+
         <activity android:name=".activity.GalleryActivity"/>
         <activity android:name=".activity.MainActivity"/>
         <activity android:name=".activity.ShowImageActivity"/>
         <activity android:name=".activity.HomeImageActivity"/>
+        <activity android:name=".activity.FeedBackActivity"/>
 
         <!--<service android:name=".service.WallPaperService"/>-->
     </application>

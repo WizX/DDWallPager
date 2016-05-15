@@ -3,6 +3,7 @@ package com.buaa.yyg.baidupager.recyclerview;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,6 +58,8 @@ public class RecyclerRefreshHeaderAdapter extends RecyclerView.Adapter<RecyclerV
                 .skipMemoryCache(true)
                 .crossFade()
                 .into(itemViewHolder.imageView);
+
+        Log.d("111", "onBindViewHolder: itemViewHolder.imageView==position===" + position + ":" + itemViewHolder.imageView.getDrawable());
 
         if (listener != null) { //如果设置了监听那么它就不为空，然后回调相应的方法
             itemViewHolder.imageView.setOnClickListener(new View.OnClickListener() {

@@ -6,6 +6,7 @@ import android.view.animation.AlphaAnimation;
 import android.widget.RelativeLayout;
 
 import com.buaa.yyg.baidupager.R;
+import com.umeng.fb.FeedbackAgent;
 
 /**
  * Created by yyg on 2016/4/27.
@@ -17,6 +18,10 @@ public class IndexActivity extends BaseActivity {
     public void initView() {
         setContentView(R.layout.activity_index);
         rl_splash = (RelativeLayout) findViewById(R.id.rl_splash);
+
+        //设置友盟新回复通知
+        FeedbackAgent agent = new FeedbackAgent(this);
+        agent.sync();
     }
 
     @Override

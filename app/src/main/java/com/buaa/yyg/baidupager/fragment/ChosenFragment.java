@@ -109,13 +109,15 @@ public class ChosenFragment extends Fragment {
             }
         });
     }
+
     /**
      * GridView数据
      */
     private void initGridData() {
-        for (int i = 1; i <= 19; i++) {
+        for (int i = 1; i <= 12; i++) {
             //添加数据
-            images.add(Constant.URL + "/chosenimg/" + i + ".jpg");
+            int num = new Random().nextInt(59) + 1;
+            images.add(Constant.URL + "/chosenimg/" + num + ".jpg");
         }
         Log.d("123", images.toString());
     }
@@ -146,12 +148,11 @@ public class ChosenFragment extends Fragment {
                 @Override
                 public void run() {
                     try {
-                        Random random = new Random();
                         //睡一下
                         Thread.sleep(1000);
 
-                        for (int i = 1; i <= 19; i++) {
-                            int num = random.nextInt(18) + 1;
+                        for (int i = 0; i <= 12; i++) {
+                            int num = new Random().nextInt(59) + 1;
                             //添加数据到集合的第一个位置
                             images.add(0, Constant.URL + "/chosenimg/" + num + ".jpg");
                         }
@@ -166,8 +167,6 @@ public class ChosenFragment extends Fragment {
             }).start();
         }
     }
-
-
 
     /**
      * GridView的Adapter
@@ -205,7 +204,7 @@ public class ChosenFragment extends Fragment {
 
             Glide.with(ChosenFragment.this)
                     .load(images.get(position))
-                    .placeholder(R.mipmap.chosen1)
+//                    .placeholder(R.mipmap.chosen1)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .thumbnail(1)
                     .crossFade()

@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -38,8 +39,8 @@ public class GalleryActivity extends Activity implements View.OnClickListener{
     private ArrayList<String> images = new ArrayList<>();
     private int index;
     Bitmap bmp = null;
-    private ImageView imageView;
     private LinearLayout ll_tv_setwallpager;
+    private static final String TAG = "GalleryActivity";
     //画廊
     private ViewPager myFullViewPager;
 
@@ -81,6 +82,8 @@ public class GalleryActivity extends Activity implements View.OnClickListener{
         Intent intent = getIntent();
         images = intent.getStringArrayListExtra("images");
         index = intent.getIntExtra("position", 0);
+
+        Log.d(TAG, "initData: images + position===" + index + images.toString());
 
         //更改当前显示位置
         handler.sendEmptyMessage(SET_CURRENT_ITEM);
@@ -185,7 +188,10 @@ public class GalleryActivity extends Activity implements View.OnClickListener{
 
         @Override
         public int getCount() {
-            return images.size();
+            if (images != null) {
+                return images.size();
+            }
+            return 0;
         }
 
         @Override
@@ -201,14 +207,16 @@ public class GalleryActivity extends Activity implements View.OnClickListener{
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            imageView = new ImageView(GalleryActivity.this);
+
+            ImageView imageView = new ImageView(GalleryActivity.this);
             imageView.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, AbsListView.LayoutParams.MATCH_PARENT));
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             container.addView(imageView);
 
             Glide.with(GalleryActivity.this)
-                    .load(images.get(position ))
-//                    .placeholder(R.mipmap.chosen1)
+                    .load(images.get(position))
+//                    .placeholder(R.mipmap.turn_right)
+                    .error(R.mipmap.turn_right)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .thumbnail(1)
                     .into(imageView);

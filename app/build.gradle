@@ -18,6 +18,10 @@ android {
         }
     }
     useLibrary 'org.apache.http.legacy'
+    packagingOptions {
+        exclude 'META-INF/maven/com.squareup.okio/okio/pom.xml'
+        exclude 'META-INF/maven/com.squareup.okio/okio/pom.properties'
+    }
 }
 
 dependencies {
@@ -38,4 +42,7 @@ dependencies {
     compile 'com.android.support:cardview-v7:23.3.0'
     compile 'io.reactivex:rxjava:1.1.5'
     compile 'io.reactivex:rxandroid:1.2.0'
+    compile 'com.nineoldandroids:library:2.4.0'
+    compile 'com.umeng:fb:5.4.0'
+    compile 'com.umeng:message:2.4.1'
 }

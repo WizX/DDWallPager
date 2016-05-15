@@ -32,12 +32,4 @@
         android:layout_height="match_parent"
         android:layout_weight="1" />
 
-    <include
-        android:id="@+id/settingLayout"
-        layout="@layout/layout_tab_item"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1" />
-
-
 </LinearLayout>

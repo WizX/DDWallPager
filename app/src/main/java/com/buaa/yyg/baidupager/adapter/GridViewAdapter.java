@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.buaa.yyg.baidupager.R;
 import com.buaa.yyg.baidupager.domain.HomeGrid;
-import com.loopj.android.image.SmartImageView;
 
 import java.util.List;
 
@@ -53,7 +52,7 @@ public class GridViewAdapter extends BaseAdapter{
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.grid_item, null);
             viewHolder = new ViewHolder();
-            viewHolder.img = (SmartImageView) convertView.findViewById(R.id.mySmartImageView);
+            viewHolder.img = (ImageView) convertView.findViewById(R.id.imageView);
             viewHolder.tv = (TextView) convertView.findViewById(R.id.tv_nice);
             convertView.setTag(viewHolder);
         } else {
@@ -71,7 +70,7 @@ public class GridViewAdapter extends BaseAdapter{
     }
 
     private static class ViewHolder {
-        private SmartImageView img;
+        private ImageView img;
         private TextView tv;
     }
 }

@@ -21,7 +21,6 @@ public class MyBottomLayout extends LinearLayout implements View.OnClickListener
     private RelativeLayout chosenLayout;
     private RelativeLayout searchLayout;
     private RelativeLayout localLayout;
-    private RelativeLayout settingLayout;
     private ICallbackListener iCallbackListener = null;
 
     public MyBottomLayout(Context context) {
@@ -67,7 +66,6 @@ public class MyBottomLayout extends LinearLayout implements View.OnClickListener
         initDataItem(chosenLayout, resid[1], "精选", color[1]);
         initDataItem(searchLayout, resid[2], "搜索", color[2]);
         initDataItem(localLayout, resid[3], "本地", color[3]);
-        initDataItem(settingLayout, resid[4], "设置", color[4]);
     }
 
     /**
@@ -93,7 +91,6 @@ public class MyBottomLayout extends LinearLayout implements View.OnClickListener
         chosenLayout = (RelativeLayout) view.findViewById(R.id.chosenLayout);
         searchLayout = (RelativeLayout) view.findViewById(R.id.searchLayout);
         localLayout = (RelativeLayout) view.findViewById(R.id.localLayout);
-        settingLayout = (RelativeLayout) view.findViewById(R.id.settingLayout);
     }
 
     /**
@@ -104,7 +101,6 @@ public class MyBottomLayout extends LinearLayout implements View.OnClickListener
         chosenLayout.setOnClickListener(this);
         searchLayout.setOnClickListener(this);
         localLayout.setOnClickListener(this);
-        settingLayout.setOnClickListener(this);
     }
 
     /**
@@ -126,9 +122,6 @@ public class MyBottomLayout extends LinearLayout implements View.OnClickListener
                 break;
             case R.id.localLayout:
                 setResidAndColor(3);
-                break;
-            case R.id.settingLayout:
-                setResidAndColor(4);
                 break;
         }
 
@@ -159,10 +152,6 @@ public class MyBottomLayout extends LinearLayout implements View.OnClickListener
                 changeDataItem(setResid(new int[] {0, 0, 0, 1, 0}),
                         new int[] {0, 0, 0, 1, 0});
                 break;
-            case 4:
-                changeDataItem(setResid(new int[] {0, 0, 0, 0, 1}) ,
-                        new int[] {0, 0, 0, 0, 1});
-                break;
         }
     }
 
@@ -176,8 +165,7 @@ public class MyBottomLayout extends LinearLayout implements View.OnClickListener
        int resChosen =  (resid[1] == 1) ?  R.mipmap.image_tabbar_button_chosen_down : R.mipmap.image_tabbar_button_chosen;
        int resSearch =  (resid[2] == 1) ?  R.mipmap.image_tabbar_button_search_down : R.mipmap.image_tabbar_button_search;
        int resLocal =  (resid[3] == 1) ?  R.mipmap.image_tabbar_button_local_down : R.mipmap.image_tabbar_button_local;
-       int resSetting =  (resid[4] == 1) ?  R.mipmap.image_tabbar_button_setting_down : R.mipmap.image_tabbar_button_setting;
-       return new int[] {resHome, resChosen, resSearch, resLocal, resSetting};
+       return new int[] {resHome, resChosen, resSearch, resLocal};
     }
 
     //初始化接口，由需要实现activity（MainActivity）调用

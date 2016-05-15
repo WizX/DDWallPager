@@ -5,11 +5,13 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.buaa.yyg.baidupager.R;
@@ -22,6 +24,7 @@ import com.buaa.yyg.baidupager.view.DisScrollView;
 import com.buaa.yyg.baidupager.view.VPScrollLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.umeng.fb.FeedbackAgent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +44,7 @@ public class HomeFragment extends Fragment {
     private DisScrollView disScroolView;
     private RelativeLayout rl_top;
     private HomeGrid grid;
+    private LinearLayout ll_feed_back;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -69,6 +73,7 @@ public class HomeFragment extends Fragment {
         mGridView = (DisGridView) view.findViewById(R.id.gridview);
         disScroolView = (DisScrollView) view.findViewById(R.id.disScroolView);
         rl_top = (RelativeLayout) view.findViewById(R.id.rl_top);
+        ll_feed_back = (LinearLayout) view.findViewById(R.id.ll_feed_back);
     }
 
     /**
@@ -108,6 +113,17 @@ public class HomeFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), HomeImageActivity.class);
                 intent.putExtra("index", position);
                 startActivity(intent);
+            }
+        });
+
+        ll_feed_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Intent intent = new Intent(getActivity(), FeedBackActivity.class);
+//                startActivity(intent);
+                FeedbackAgent agent = new FeedbackAgent(getActivity());
+                agent.startFeedbackActivity();
+                Log.d("111", "onClick: ");
             }
         });
     }

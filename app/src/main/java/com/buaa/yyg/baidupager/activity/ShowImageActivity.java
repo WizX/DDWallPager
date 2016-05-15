@@ -137,6 +137,7 @@ public class ShowImageActivity extends BaseActivity {
                 intent.putStringArrayListExtra("images", adapter.getAllImage());
                 intent.putExtra("position", position);
                 startActivity(intent);
+                UIUtils.showToast(ShowImageActivity.this, position + "");
             }
 
             @Override
