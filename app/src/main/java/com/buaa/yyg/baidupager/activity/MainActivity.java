@@ -67,6 +67,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     RelativeLayout tv_check_version;
     @Bind(R.id.tv_version_name)
     TextView tv_version_name;
+    @Bind(R.id.rl_feed_back)
+    RelativeLayout rl_feed_back;
 
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
@@ -176,7 +178,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     public void progress(View v) {
-
     }
 
     /**
@@ -244,6 +245,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private void listener() {
         tv_check_version.setOnClickListener(this);
+        rl_feed_back.setOnClickListener(this);
     }
 
     @Override
@@ -252,6 +254,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.tv_check_version:
                 checkVersion();
                 Log.d("111", "检查更新");
+                break;
+            case R.id.rl_feed_back:
+                Intent intent = new Intent(MainActivity.this, FeedBackActivity.class);
+                startActivity(intent);
+                //1s之后关闭侧滑菜单
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        drawerLayoutMain.closeDrawers();
+                    }
+                }, 1000);
                 break;
             default:
                 break;

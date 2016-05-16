@@ -17,7 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.buaa.yyg.baidupager.R;
-import com.buaa.yyg.baidupager.activity.GalleryActivity;
+import com.buaa.yyg.baidupager.activity.RecyclerGalleryActivity;
 import com.buaa.yyg.baidupager.global.Constant;
 import com.buaa.yyg.baidupager.view.DisGridView;
 import com.buaa.yyg.baidupager.view.LoadReshView;
@@ -92,7 +92,7 @@ public class ChosenFragment extends Fragment {
         myGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(), GalleryActivity.class);
+                Intent intent = new Intent(getActivity(), RecyclerGalleryActivity.class);
                 intent.putStringArrayListExtra("images", images);
                 intent.putExtra("position", position);
                 startActivity(intent);
@@ -119,7 +119,6 @@ public class ChosenFragment extends Fragment {
             int num = new Random().nextInt(59) + 1;
             images.add(Constant.URL + "/chosenimg/" + num + ".jpg");
         }
-        Log.d("123", images.toString());
     }
 
     private class PullClick implements LoadReshView.pullCallBack {
@@ -201,6 +200,8 @@ public class ChosenFragment extends Fragment {
             }
             //设置数据
             convertView.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, 600));
+
+            Log.d("333", "getView: "  + position + images.get(position) + "\n");
 
             Glide.with(ChosenFragment.this)
                     .load(images.get(position))

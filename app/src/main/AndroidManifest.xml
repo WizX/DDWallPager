@@ -27,7 +27,7 @@
 
         <!--友盟接口-->
         <activity
-            android:name="com.umeng.fb.ConversationActivity"/>
+            android:name=".activity.FeedBackActivity"/>
         <meta-data
             android:value="5738653ce0f55af5e2000c62"
             android:name="UMENG_APPKEY"/>
@@ -39,7 +39,7 @@
         <activity android:name=".activity.MainActivity"/>
         <activity android:name=".activity.ShowImageActivity"/>
         <activity android:name=".activity.HomeImageActivity"/>
-        <activity android:name=".activity.FeedBackActivity"/>
+        <activity android:name=".activity.RecyclerGalleryActivity"/>
 
         <!--<service android:name=".service.WallPaperService"/>-->
     </application>

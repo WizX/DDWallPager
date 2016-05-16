@@ -217,21 +217,21 @@ public class SearchFragment extends Fragment {
                 case 0:
                     //实际开发中数据还是得从服务器获取
                     ArrayList<String> newDataOne = new ArrayList<>();
-                    newDataOne.add("清纯妹子");
+                    newDataOne.add("可爱粉色");
                     newDataOne.add("自然沙滩");
-                    newDataOne.add("汽车");
-                    newDataOne.add("宠物狗");
+                    newDataOne.add("节日祝福");
+                    newDataOne.add("可爱萌宠");
                     newDataOne.add("游戏壁纸");
-                    newDataOne.add("制服美女");
-                    newDataOne.add("艺术写真");
+                    newDataOne.add("唯美枫叶");
+                    newDataOne.add("碧水蓝天");
                     newDataOne.add("可爱卡通");
-                    newDataOne.add("性格美女");
+                    newDataOne.add("星座生肖");
                     newDataOne.add("气质型男");
-                    newDataOne.add("女明星");
-                    newDataOne.add("可爱性感");
-                    newDataOne.add("风景照");
-                    newDataOne.add("足球");
-                    newDataOne.add("兔女郎");
+                    newDataOne.add("美女明星");
+                    newDataOne.add("宇宙奥秘");
+                    newDataOne.add("复古建筑");
+                    newDataOne.add("足球天下");
+                    newDataOne.add("篮球明星");
                     newDataOne.add("国内风光");
 
                     //添加数据
@@ -239,24 +239,24 @@ public class SearchFragment extends Fragment {
                     break;
                 case 1:
                     ArrayList<String> newDataTwo = new ArrayList<>();
-                    newDataTwo.add("性感美女");
-                    newDataTwo.add("美女模特");
+                    newDataTwo.add("海洋生物");
+                    newDataTwo.add("各国风情");
                     newDataTwo.add("动漫卡通");
-                    newDataTwo.add("丝袜美女");
-                    newDataTwo.add("唯美自然");
-                    newDataTwo.add("裙装美女");
-                    newDataTwo.add("美女照片");
+                    newDataTwo.add("可爱美女");
+                    newDataTwo.add("生活艺术");
+                    newDataTwo.add("秦时明月");
+                    newDataTwo.add("浪漫爱情");
                     newDataTwo.add("荷塘月色");
-                    newDataTwo.add("泳装女神");
+                    newDataTwo.add("军队风采");
                     newDataTwo.add("自然夜景");
                     newDataTwo.add("动物图片");
-                    newDataTwo.add("山水画");
-                    newDataTwo.add("艺术云图");
-                    newDataTwo.add("女神范");
+                    newDataTwo.add("山水名画");
+                    newDataTwo.add("欧美名车");
+                    newDataTwo.add("宇宙奥秘");
                     newDataTwo.add("可爱美女");
-                    newDataTwo.add("迷人");
-                    newDataTwo.add("日韩美女");
-                    newDataTwo.add("足球宝贝");
+                    newDataTwo.add("水上运动");
+                    newDataTwo.add("战斗飞机");
+                    newDataTwo.add("草木浓情");
                     //添加数据
                     data.add(newDataTwo);
 

@@ -64,7 +64,6 @@ public class ShowImageActivity extends BaseActivity {
                     //取得图片集合,添加到集合尾部
                     if (adapter != null) {
                         adapter.addMoreItem(imageUrl, lastVisibleItemPosition);
-                        Log.d(TAG, "adapter: " + adapter.toString());
                     }
                     DelayCloseSwipeRefresh(1500);
                     break;
@@ -72,7 +71,6 @@ public class ShowImageActivity extends BaseActivity {
                     //取得图片集合,添加到集合顶部
                     if (adapter != null) {
                         adapter.addTopItem(imageUrl);
-                        Log.d(TAG, "adapter: " + adapter.toString());
                     }
                     flag = false;
                     DelayCloseSwipeRefresh(1500);

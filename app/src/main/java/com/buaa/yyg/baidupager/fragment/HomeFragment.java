@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.buaa.yyg.baidupager.R;
+import com.buaa.yyg.baidupager.activity.FeedBackActivity;
 import com.buaa.yyg.baidupager.activity.HomeImageActivity;
 import com.buaa.yyg.baidupager.adapter.GridViewAdapter;
 import com.buaa.yyg.baidupager.domain.HomeGrid;
@@ -24,7 +25,6 @@ import com.buaa.yyg.baidupager.view.DisScrollView;
 import com.buaa.yyg.baidupager.view.VPScrollLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.umeng.fb.FeedbackAgent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -119,10 +119,10 @@ public class HomeFragment extends Fragment {
         ll_feed_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(getActivity(), FeedBackActivity.class);
-//                startActivity(intent);
-                FeedbackAgent agent = new FeedbackAgent(getActivity());
-                agent.startFeedbackActivity();
+                Intent intent = new Intent(getActivity(), FeedBackActivity.class);
+                startActivity(intent);
+//                FeedbackAgent agent = new FeedbackAgent(getActivity());
+//                agent.startFeedbackActivity();
                 Log.d("111", "onClick: ");
             }
         });
