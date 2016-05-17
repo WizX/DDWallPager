@@ -12,7 +12,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
@@ -42,6 +42,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -55,6 +57,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private int versionCodeService;
     private String versionNameClient;
     private String desc;
+    private List<Fragment> fragments = new ArrayList<>();
 
 
     @Bind(R.id.myViewPager)
@@ -121,7 +124,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     public void initData() {
-        myViewPager.setAdapter(new MyFragmentAdapter(getSupportFragmentManager()));
+        addFragments();
+        myViewPager.setAdapter(new MyFragmentStateAdapter(getSupportFragmentManager(), fragments));
         drawerLayoutMain.setDrawerListener(new DrawerLayout.SimpleDrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
@@ -148,6 +152,21 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         });
 
         setting();
+    }
+
+    /**
+     * 创建fragment实例，并放入list集合中
+     */
+    private void addFragments() {
+        HomeFragment homeFragment = new HomeFragment();
+        ChosenFragment chosenFragment = new ChosenFragment();
+        SearchFragment searchFragment = new SearchFragment();
+        LocalFragment localFragment = new LocalFragment();
+
+        fragments.add(homeFragment);
+        fragments.add(chosenFragment);
+        fragments.add(searchFragment);
+        fragments.add(localFragment);
     }
 
     @Override
@@ -208,31 +227,25 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     /**
      * viewPager的adapter，改变当前fragment
      */
-    private class MyFragmentAdapter extends FragmentPagerAdapter {
+    private class MyFragmentStateAdapter extends FragmentStatePagerAdapter {
+        List<Fragment> fragments;
 
-        public MyFragmentAdapter(FragmentManager fm) {
+        //fragments里是ViewPager所有要显示的Fragment的集合
+        public MyFragmentStateAdapter(FragmentManager fm, List<Fragment> fragments) {
             super(fm);
+            this.fragments = fragments;
         }
 
         @Override
         public Fragment getItem(int position) {
-            switch (position) {
-                case 0:
-                    return new HomeFragment();
-                case 1:
-                    return new ChosenFragment();
-                case 2:
-                    return new SearchFragment();
-                case 3:
-                    return new LocalFragment();
-            }
-            return null;
+            return fragments.get(position);
         }
 
+        //此ViewPager一共有多少个标签页可以滑动
         @Override
         public int getCount() {
             //一共4个页面
-            return 4;
+            return fragments.size();
         }
     }
 

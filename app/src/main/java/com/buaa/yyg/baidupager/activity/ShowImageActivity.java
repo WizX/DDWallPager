@@ -21,6 +21,7 @@ import com.buaa.yyg.baidupager.recyclerview.SpacesItemDecoration;
 import com.buaa.yyg.baidupager.utils.UIUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -82,6 +83,14 @@ public class ShowImageActivity extends BaseActivity {
         }
     });
     private StaggeredGridLayoutManager staggeredGridLayoutManager;
+
+    public ArrayList<String> getAllImage(){
+        ArrayList<String> imageString = new ArrayList<>();
+        for (int i = 0; i < imageUrl.size(); i++) {
+            imageString.add(imageUrl.get(i).getContentUrl());
+        }
+        return imageString;
+    }
 
     @Override
     public void initView() {

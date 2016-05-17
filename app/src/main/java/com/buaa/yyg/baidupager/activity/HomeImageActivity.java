@@ -294,9 +294,6 @@ public class HomeImageActivity extends BaseActivity {
                         if (imageList != null) {
                             //请求成功
                             Log.d(TAG, "onResponse: " + "请求成功");
-                            Log.d(TAG, "imageList.getTotal(): " + imageList.getTotal());
-                            Log.d(TAG, "imageList: " + imageList);
-                            Log.d(TAG, "imageList.toString(): " + imageList.toString());
 
                             if (imageList.getTngou().size() != 0) {
                                 //成功返回内容

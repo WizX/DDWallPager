@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * homeFragment部分
  * Created by yyg on 2016/5/13.
  */
 public class HomeRecyclerRefreshHeaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{

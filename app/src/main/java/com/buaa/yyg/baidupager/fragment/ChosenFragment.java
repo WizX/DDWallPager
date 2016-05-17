@@ -36,7 +36,7 @@ public class ChosenFragment extends Fragment {
     private LoadReshView loadview;
     private DisGridView myGridView;
     private ArrayList<String> images = new ArrayList<>();
-    private myAdapter adapter;
+    private MyAdapter adapter;
     private static final int LOADING_COMPLETE = 1;
 
     private Handler handle= new Handler(){
@@ -45,6 +45,7 @@ public class ChosenFragment extends Fragment {
             switch (msg.what){
                 case LOADING_COMPLETE:
                     adapter.notifyDataSetChanged();
+
                     //数据加载完成，让LoadReshView的正在加载中textview消失
                     loadview.dataFinish();
                     break;
@@ -79,6 +80,12 @@ public class ChosenFragment extends Fragment {
         init();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Glide.get(getActivity()).clearMemory();
+    }
+
     /**
      * 初始化数据
      */
@@ -87,7 +94,7 @@ public class ChosenFragment extends Fragment {
         if (images.size() == 0) {
             initGridData();
         }
-        adapter = new myAdapter(getActivity());
+        adapter = new MyAdapter(getActivity());
         myGridView.setAdapter(adapter);
         myGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -119,6 +126,7 @@ public class ChosenFragment extends Fragment {
             int num = new Random().nextInt(59) + 1;
             images.add(Constant.URL + "/chosenimg/" + num + ".jpg");
         }
+        Log.d("123", images.toString());
     }
 
     private class PullClick implements LoadReshView.pullCallBack {
@@ -150,12 +158,11 @@ public class ChosenFragment extends Fragment {
                         //睡一下
                         Thread.sleep(1000);
 
-                        for (int i = 0; i <= 12; i++) {
+                        for (int i = 1; i <= 12; i++) {
                             int num = new Random().nextInt(59) + 1;
                             //添加数据到集合的第一个位置
                             images.add(0, Constant.URL + "/chosenimg/" + num + ".jpg");
                         }
-                        Log.d("123", images.toString());
 
                         Log.d("123", "顶部数据已经加载完了");
                         handle.sendEmptyMessage(LOADING_COMPLETE);
@@ -170,11 +177,11 @@ public class ChosenFragment extends Fragment {
     /**
      * GridView的Adapter
      */
-    private class myAdapter extends BaseAdapter {
+    private class MyAdapter extends BaseAdapter {
 
         private LayoutInflater inflater;
 
-        public myAdapter(Context mContext) {
+        public MyAdapter(Context mContext) {
             inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
@@ -197,17 +204,16 @@ public class ChosenFragment extends Fragment {
         public View getView(int position, android.view.View convertView, ViewGroup parent) {
             if (convertView == null) {
                 convertView = inflater.inflate(R.layout.chosen_item, parent, false);
+                //设置数据
+                convertView.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, 600));
             }
-            //设置数据
-            convertView.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, 600));
-
-            Log.d("333", "getView: "  + position + images.get(position) + "\n");
 
             Glide.with(ChosenFragment.this)
                     .load(images.get(position))
 //                    .placeholder(R.mipmap.chosen1)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .thumbnail(1)
+                    .skipMemoryCache(true)
                     .crossFade()
                     .into((ImageView) convertView);
             return convertView;

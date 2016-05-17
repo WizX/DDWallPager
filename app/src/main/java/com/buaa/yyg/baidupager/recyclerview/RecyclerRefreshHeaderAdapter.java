@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * searchFragment部分
  * Created by yyg on 2016/5/13.
  */
 public class RecyclerRefreshHeaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
