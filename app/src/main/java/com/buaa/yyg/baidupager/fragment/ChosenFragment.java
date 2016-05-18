@@ -213,7 +213,7 @@ public class ChosenFragment extends Fragment {
 //                    .placeholder(R.mipmap.chosen1)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .thumbnail(1)
-                    .skipMemoryCache(true)
+//                    .skipMemoryCache(true)    //加入之后会闪屏
                     .crossFade()
                     .into((ImageView) convertView);
             return convertView;

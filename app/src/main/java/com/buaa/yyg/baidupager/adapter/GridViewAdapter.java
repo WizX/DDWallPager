@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.buaa.yyg.baidupager.R;
 import com.buaa.yyg.baidupager.domain.HomeGrid;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.List;
 
@@ -53,19 +55,23 @@ public class GridViewAdapter extends BaseAdapter{
             convertView = LayoutInflater.from(context).inflate(R.layout.grid_item, null);
             viewHolder = new ViewHolder();
             viewHolder.img = (ImageView) convertView.findViewById(R.id.imageView);
-            viewHolder.tv = (TextView) convertView.findViewById(R.id.tv_nice);
+            viewHolder.tv = (TextView) convertView.findViewById(R.id.tv_name);
+
+            //动态设置高度，对应与DisGridView的onMeasure，解决布局冲突
+            convertView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 940));
+
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        viewHolder.img.setBackgroundResource(gridData.get(position).getImg());
-        if (position == 0) {
-            viewHolder.img.setScaleType(ImageView.ScaleType.MATRIX);
-            viewHolder.img.setImageResource(R.mipmap.hot);
-        }
+
         viewHolder.tv.setText(gridData.get(position).getType());
-        //动态设置高度，对应与DisGridView的onMeasure，解决布局冲突
-        convertView.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 380));
+        Glide.with(context)
+                .load(gridData.get(position).getImg())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .crossFade()
+                .into(viewHolder.img);
+
         return convertView;
     }
 

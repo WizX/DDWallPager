@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.buaa.yyg.baidupager.R;
-import com.buaa.yyg.baidupager.domain.Value;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
@@ -22,7 +21,7 @@ import java.util.List;
  */
 public class RecyclerRefreshHeaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
-    private List<Value> image = new ArrayList<>();
+    private List<String> image = new ArrayList<>();
     private Context context;
     private onItemClickListener listener;
 
@@ -53,9 +52,9 @@ public class RecyclerRefreshHeaderAdapter extends RecyclerView.Adapter<RecyclerV
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         final ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
         Glide.with(context)
-                .load(image.get(position).getContentUrl())
+                .load(image.get(position))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .skipMemoryCache(true)
+//                .skipMemoryCache(true)        //加入这个之后会闪屏，很严重
                 .crossFade()
                 .into(itemViewHolder.imageView);
 
@@ -116,7 +115,7 @@ public class RecyclerRefreshHeaderAdapter extends RecyclerView.Adapter<RecyclerV
     public ArrayList<String> getAllImage(){
         ArrayList<String> imageString = new ArrayList<>();
         for (int i = 0; i < image.size(); i++) {
-            imageString.add(image.get(i).getContentUrl());
+            imageString.add(image.get(i));
         }
         return imageString;
     }
@@ -125,7 +124,7 @@ public class RecyclerRefreshHeaderAdapter extends RecyclerView.Adapter<RecyclerV
      * 在原有数据后面添加更多数据
      * @param imageUrl
      */
-    public void addMoreItem(List<Value> imageUrl, int lastVisibleItemPosition) {
+    public void addMoreItem(List<String> imageUrl, int lastVisibleItemPosition) {
         image.addAll(imageUrl);
 
 
@@ -142,7 +141,7 @@ public class RecyclerRefreshHeaderAdapter extends RecyclerView.Adapter<RecyclerV
      * 添加数据到原有集合顶部，用于下拉刷新
      * @param imageUrl
      */
-    public void addTopItem(List<Value> imageUrl) {
+    public void addTopItem(List<String> imageUrl) {
         image.addAll(0, imageUrl);
         notifyDataSetChanged();
     }

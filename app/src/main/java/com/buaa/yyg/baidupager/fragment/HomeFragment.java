@@ -135,50 +135,51 @@ public class HomeFragment extends Fragment {
 
         //1
         grid = new HomeGrid();
-        grid.setImg(R.mipmap.nice);
-        grid.setType("最新美女");
+        grid.setImg(R.mipmap.home0);
+        grid.setType("小清新-美女");
         gridData.add(grid);
 
         //2
         grid = new HomeGrid();
-        grid.setImg(R.mipmap.nice);
-        grid.setType("性感美女");
+        grid.setImg(R.mipmap.home1);
+        grid.setType("校花-美女");
         gridData.add(grid);
 
         //3
         grid = new HomeGrid();
-        grid.setImg(R.mipmap.nice);
-        grid.setType("韩日美女");
+        grid.setImg(R.mipmap.home2);
+        grid.setType("高圆圆-明星");
         gridData.add(grid);
 
         //4
         grid = new HomeGrid();
-        grid.setImg(R.mipmap.nice);
-        grid.setType("丝袜美腿");
+        grid.setImg(R.mipmap.home3);
+        grid.setType("胡歌-明星");
         gridData.add(grid);
+
 
         //5
         grid = new HomeGrid();
-        grid.setImg(R.mipmap.nice);
-        grid.setType("美女照片");
+        grid.setImg(R.mipmap.home4);
+        grid.setType("刘亦菲-明星");
         gridData.add(grid);
 
         //6
         grid = new HomeGrid();
-        grid.setImg(R.mipmap.nice);
-        grid.setType("美女写真");
+        grid.setImg(R.mipmap.home5);
+        grid.setType("井柏然-明星");
         gridData.add(grid);
 
         //7
         grid = new HomeGrid();
-        grid.setImg(R.mipmap.nice);
-        grid.setType("清纯美女");
+        grid.setImg(R.mipmap.home6);
+        grid.setType("刘诗诗-明星");
         gridData.add(grid);
 
         //8
         grid = new HomeGrid();
-        grid.setImg(R.mipmap.nice);
-        grid.setType("性感车模");
+        grid.setImg(R.mipmap.home7);
+        grid.setType("甄子丹-明星");
         gridData.add(grid);
     }
 

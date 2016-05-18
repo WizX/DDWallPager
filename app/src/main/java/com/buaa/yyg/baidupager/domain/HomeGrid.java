@@ -7,8 +7,7 @@ package com.buaa.yyg.baidupager.domain;
 public class HomeGrid {
 
     /**
-     * 当我们开发的时候，这里应该是个接口，那应该是String类型
-     * 我们现在模拟的是本地的图片，所以是int
+     * 设置首页图片和文字，使用本地图片较好，或者使用一条简易json
      */
 
     public HomeGrid(){

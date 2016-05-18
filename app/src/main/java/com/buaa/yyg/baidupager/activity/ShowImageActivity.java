@@ -64,14 +64,14 @@ public class ShowImageActivity extends BaseActivity {
                 case SHOW_IMAGES_URL_MORE:
                     //取得图片集合,添加到集合尾部
                     if (adapter != null) {
-                        adapter.addMoreItem(imageUrl, lastVisibleItemPosition);
+                        adapter.addMoreItem(getImageToString(), lastVisibleItemPosition);
                     }
                     DelayCloseSwipeRefresh(1500);
                     break;
                 case SHOW_IMAGES_URL_TOP:
                     //取得图片集合,添加到集合顶部
                     if (adapter != null) {
-                        adapter.addTopItem(imageUrl);
+                        adapter.addTopItem(getImageToString());
                     }
                     flag = false;
                     DelayCloseSwipeRefresh(1500);
@@ -84,7 +84,11 @@ public class ShowImageActivity extends BaseActivity {
     });
     private StaggeredGridLayoutManager staggeredGridLayoutManager;
 
-    public ArrayList<String> getAllImage(){
+    /**
+     * 转化集合类型Value到string型
+     * @return
+     */
+    public ArrayList<String> getImageToString(){
         ArrayList<String> imageString = new ArrayList<>();
         for (int i = 0; i < imageUrl.size(); i++) {
             imageString.add(imageUrl.get(i).getContentUrl());

@@ -12,14 +12,14 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.buaa.yyg.baidupager.R;
-import com.buaa.yyg.baidupager.domain.TnGouImageList;
-import com.buaa.yyg.baidupager.domain.Tngou;
-import com.buaa.yyg.baidupager.global.TnGou;
+import com.buaa.yyg.baidupager.domain.BaiDuImageApi;
+import com.buaa.yyg.baidupager.domain.Img;
 import com.buaa.yyg.baidupager.recyclerview.BottomRecyclerOnScrollListener;
-import com.buaa.yyg.baidupager.recyclerview.HomeRecyclerRefreshHeaderAdapter;
+import com.buaa.yyg.baidupager.recyclerview.RecyclerRefreshHeaderAdapter;
 import com.buaa.yyg.baidupager.recyclerview.SpacesItemDecoration;
 import com.buaa.yyg.baidupager.utils.UIUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -40,15 +40,17 @@ public class HomeImageActivity extends BaseActivity {
     private static final int SHOW_IMAGES_URL_MORE = 0;
     private static final int SHOW_IMAGES_URL_TOP = 1;
     private int index;
-    private List<Tngou> imageUrl; // 图片集合
+    private List<Img> imageUrl; // 图片集合
     private RecyclerView recyclerView;
-    private HomeRecyclerRefreshHeaderAdapter adapter;
+    private RecyclerRefreshHeaderAdapter adapter;
     private TextView tv_search_text;
     private TextView tv_change_other;
     private MyApiListEndpointInterface apiService;
     private SwipeRefreshLayout swipe_refresh_showimage;
     private static boolean flag = false;
     public int lastVisibleItemPosition;
+    String col = null;
+    String tag = null;
 
     private Handler handler = new Handler(new Handler.Callback() {
 
@@ -58,7 +60,7 @@ public class HomeImageActivity extends BaseActivity {
                 case SHOW_IMAGES_URL_MORE:
                     //取得图片集合,添加到集合尾部
                     if (adapter != null) {
-                        adapter.addMoreItem(imageUrl, lastVisibleItemPosition);
+                        adapter.addMoreItem(getImageToString(), lastVisibleItemPosition);
                         Log.d(TAG, "adapter: " + adapter.toString());
                     }
                     DelayCloseSwipeRefresh(1500);
@@ -66,7 +68,7 @@ public class HomeImageActivity extends BaseActivity {
                 case SHOW_IMAGES_URL_TOP:
                     //取得图片集合,添加到集合顶部
                     if (adapter != null) {
-                        adapter.addTopItem(imageUrl);
+                        adapter.addTopItem(getImageToString());
                         Log.d(TAG, "adapter: " + adapter.toString());
                     }
                     flag = false;
@@ -79,6 +81,18 @@ public class HomeImageActivity extends BaseActivity {
         }
     });
     private StaggeredGridLayoutManager staggeredGridLayoutManager;
+
+    /**
+     * 转化集合类型Tngou到string型
+     * @return
+     */
+    public ArrayList<String> getImageToString(){
+        ArrayList<String> imageString = new ArrayList<>();
+        for (int i = 0; i < imageUrl.size(); i++) {
+            imageString.add(imageUrl.get(i).getImageUrl());
+        }
+        return imageString;
+    }
 
     @Override
     public void initView() {
@@ -95,7 +109,9 @@ public class HomeImageActivity extends BaseActivity {
     public void initData() {
         Intent intent = getIntent();
         index = intent.getIntExtra("index", 0);
-        tv_search_text.setText(getTextFromIndex(index));
+        //初始化col和tag
+        getTextFromIndex(index);
+        tv_search_text.setText(tag);
 
         //text传递过来之前已经做过判断
         getJsonObjectUseRetrofit();
@@ -125,7 +141,7 @@ public class HomeImageActivity extends BaseActivity {
         });
 
         //recyclerView的点击侦听，单击和双击
-        adapter.setOnClickListener(new HomeRecyclerRefreshHeaderAdapter.onItemClickListener() {
+        adapter.setOnClickListener(new RecyclerRefreshHeaderAdapter.onItemClickListener() {
             @Override
             public void ItemClickListener(View view, int position) {
                 Intent intent = new Intent(HomeImageActivity.this, GalleryActivity.class);
@@ -169,37 +185,43 @@ public class HomeImageActivity extends BaseActivity {
         }
     }
 
-    public String getTextFromIndex(int index) {
-        String text = null;
+    public void getTextFromIndex(int index) {
         switch (index) {
             case 0:
-                text = "最新美女";
+                col = "美女";
+                tag = "小清新";
                 break;
             case 1:
-                text = "性感美女";
+                col = "美女";
+                tag = "校花";
                 break;
             case 2:
-                text = "韩日美女";
+                col = "明星";
+                tag = "高圆圆";
                 break;
             case 3:
-                text = "丝袜美腿";
+                col = "明星";
+                tag = "胡歌";
                 break;
             case 4:
-                text = "美女照片";
+                col = "明星";
+                tag = "刘亦菲";
                 break;
             case 5:
-                text = "美女写真";
+                col = "明星";
+                tag = "井柏然";
                 break;
             case 6:
-                text = "清纯美女";
+                col = "明星";
+                tag = "刘诗诗";
                 break;
             case 7:
-                text = "性感车模";
+                col = "明星";
+                tag = "甄子丹";
                 break;
             default:
                 break;
         }
-        return text;
     }
 
     /**
@@ -258,87 +280,83 @@ public class HomeImageActivity extends BaseActivity {
         recyclerView.addItemDecoration(decoration);
 
         // 设置recycler中的adapter
-        adapter = new HomeRecyclerRefreshHeaderAdapter(HomeImageActivity.this);
+        adapter = new RecyclerRefreshHeaderAdapter(HomeImageActivity.this);
         recyclerView.setAdapter(adapter);
     }
 
     /**
      * 根据index获得图片列表
-     * http://www.tngou.net/tnfs/api/list?id=2&page=2&rows=20
+     * http://image.baidu.com/data/imgs?col=美女&tag=小清新&sort=0&pn=10&rn=10&p=channel&from=1
      */
     private void getJsonObjectUseRetrofit() {
+        //第二次运行(换一组功能)时不需要重新创建
+        if (apiService == null) {
 
-        //图片列表
-        if (index > 0) {
+            String BASE_URL = "http://image.baidu.com/data/";
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
 
-            //第二次运行(换一组功能)时不需要重新创建
-            if (apiService == null) {
+            apiService = retrofit.create(MyApiListEndpointInterface.class);
+        }
+        int random = new Random().nextInt(100) + 1;
+        Log.d(TAG, "random: " + random);
+        Call<BaiDuImageApi> apiResponse = apiService.getImage(col, tag, 0, random, 20, "channel", 1);
+        apiResponse.enqueue(new Callback<BaiDuImageApi>() {
+            @Override
+            public void onResponse(Call<BaiDuImageApi > call, Response<BaiDuImageApi > response) {
+                if (response.isSuccessful()) {
+                    BaiDuImageApi imageList = response.body();
+                    Log.d(TAG, "onResponse: 传过来的index :  " + index);
+                    if (imageList != null) {
+                        //请求成功
+                        Log.d(TAG, "onResponse: " + "请求成功");
 
-                String BASE_URL = "http://www.tngou.net/tnfs/api/";
-                Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl(BASE_URL)
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build();
+                        if (imageList.getImgs().size() != 0) {
+                            //成功返回内容
+                            imageUrl = imageList.getImgs();
 
-                apiService = retrofit.create(MyApiListEndpointInterface.class);
-            }
-            int random = new Random().nextInt(3) + 1;
-            Log.d(TAG, "random: " + random);
-            Call<TnGouImageList> apiResponse = apiService.getImage(index, random, TnGou.LIST_ROWS);
-            apiResponse.enqueue(new Callback<TnGouImageList>() {
-                @Override
-                public void onResponse(Call<TnGouImageList > call, Response<TnGouImageList > response) {
-                    if (response.isSuccessful()) {
-                        TnGouImageList imageList = response.body();
-                        Log.d(TAG, "onResponse: 传过来的index :  " + index);
-                        if (imageList != null) {
-                            //请求成功
-                            Log.d(TAG, "onResponse: " + "请求成功");
-
-                            if (imageList.getTngou().size() != 0) {
-                                //成功返回内容
-                                imageUrl = imageList.getTngou();
-
-                                handler.sendEmptyMessage(SHOW_IMAGES_URL_MORE);
-                                if (flag) {
-                                    handler.sendEmptyMessage(SHOW_IMAGES_URL_TOP);
-                                }
-
-                                Log.d(TAG, "getContentUrl: " + imageList.getTngou().get(2).getImg());
-                                Log.d(TAG, "onResponse: imagesUrl = " + imageUrl.size());
-                            } else {
-                                UIUtils.showToast(HomeImageActivity.this, "获取数据失败");
-                                finish();
+                            handler.sendEmptyMessage(SHOW_IMAGES_URL_MORE);
+                            if (flag) {
+                                handler.sendEmptyMessage(SHOW_IMAGES_URL_TOP);
                             }
+
+                            Log.d(TAG, "getContentUrl: " + imageList.getImgs().get(2).getImageUrl());
+                            Log.d(TAG, "onResponse: imagesUrl = " + imageUrl.size());
+                        } else {
+                            UIUtils.showToast(HomeImageActivity.this, "获取数据失败");
+                            finish();
                         }
                     }
-
-                    Log.e(TAG, "onResponse: " + response.errorBody());
                 }
 
-                @Override
-                public void onFailure(Call<TnGouImageList > call, Throwable t) {
-                    Log.e(TAG, "onFailure: " + t.getMessage() );
-                    UIUtils.showToast(HomeImageActivity.this, "网络错误，请稍后再试");
-                    swipe_refresh_showimage.setRefreshing(false);
-                    //第一次请求失败退出activity
-                    if (imageUrl == null) {
-                        finish();
-                    }
-                }
-            });
-        } else if(index == 0) {
-            //最新图片
+                Log.e(TAG, "onResponse: " + response.errorBody());
+            }
 
-        }
+            @Override
+            public void onFailure(Call<BaiDuImageApi > call, Throwable t) {
+                Log.e(TAG, "onFailure: " + t.getMessage() );
+                UIUtils.showToast(HomeImageActivity.this, "网络错误，请稍后再试");
+                swipe_refresh_showimage.setRefreshing(false);
+                //第一次请求失败退出activity
+                if (imageUrl == null) {
+                    finish();
+                }
+            }
+        });
     }
 
-    //list?id=2&page=2&rows=20
+    //imgs?col=美女&tag=小清新&sort=0&pn=10&rn=10&p=channel&from=1
     public interface MyApiListEndpointInterface {
-        @GET("list")
-        Call<TnGouImageList> getImage(@Query("id") int id,
-                                      @Query("page") int page,
-                                      @Query("rows") int rows);
+        @GET("imgs")
+        Call<BaiDuImageApi> getImage(@Query("col") String col,
+                                     @Query("tag") String tag,
+                                     @Query("sort") int sort,
+                                     @Query("pn") int pn,
+                                     @Query("rn") int rn,
+                                     @Query("p") String p,
+                                     @Query("from") int from);
     }
 
 }

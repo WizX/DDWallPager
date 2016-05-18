@@ -2,6 +2,7 @@ package com.buaa.yyg.baidupager.RecyclerGallery;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import com.buaa.yyg.baidupager.R;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -21,10 +23,12 @@ public class RecyclerGalleryAdapter extends RecyclerView.Adapter<RecyclerGallery
     private Context context;
     private ArrayList<String> images;
     private onItemClickListener itemClickListener;
+    private String dirAbsolutePath;
 
-    public RecyclerGalleryAdapter(Context context, ArrayList<String> images) {
+    public RecyclerGalleryAdapter(Context context, ArrayList<String> images, String dirAbsolutePath) {
         this.context = context;
         this.images = images;
+        this.dirAbsolutePath = dirAbsolutePath;
     }
 
     /**
@@ -48,12 +52,13 @@ public class RecyclerGalleryAdapter extends RecyclerView.Adapter<RecyclerGallery
      */
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        Glide.with(context)
-                .load(images.get(position))
-                .error(R.mipmap.turn_right)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .thumbnail(1)
-                .into(holder.imageView);
+
+        if (TextUtils.isEmpty(dirAbsolutePath)) {
+            //文件夹路径为空，加载网络图片
+            setImgFromUrl(position, holder.imageView);
+        } else {
+            setImgFromDir(position, holder.imageView);
+        }
 
         //如果设置了回调，则设置点击事件
         if (itemClickListener != null) {
@@ -65,6 +70,32 @@ public class RecyclerGalleryAdapter extends RecyclerView.Adapter<RecyclerGallery
                 }
             });
         }
+    }
+
+    /**
+     * 从网络url获取路径
+     * @param position
+     */
+    private void setImgFromUrl(int position, ImageView imageView) {
+        Glide.with(context)
+                .load(images.get(position))
+                .error(R.mipmap.turn_right)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .thumbnail(1)
+                .into(imageView);
+    }
+
+    /**
+     * 从本地获取路径
+     * @param position
+     */
+    private void setImgFromDir(int position, ImageView imageView) {
+        Glide.with(context)
+                .load(new File(dirAbsolutePath + "/" +  images.get(position)))
+                .error(R.mipmap.turn_right)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .thumbnail(1)
+                .into(imageView);
     }
 
     @Override

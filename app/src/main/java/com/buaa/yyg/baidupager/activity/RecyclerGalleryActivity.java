@@ -2,6 +2,7 @@ package com.buaa.yyg.baidupager.activity;
 
 import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,6 +13,7 @@ import com.buaa.yyg.baidupager.RecyclerGallery.RecyclerGalleryAdapter;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -24,6 +26,7 @@ public class RecyclerGalleryActivity extends BaseActivity{
     private MyRecyclerGalleryView recyclerView;
     private RecyclerGalleryAdapter adapter;
     private ImageView img;
+    private String dirAbsolutePath;
 
     @Override
     public void initView() {
@@ -48,7 +51,12 @@ public class RecyclerGalleryActivity extends BaseActivity{
             @Override
             public void onItemClick(View view, int position) {
                 //设置大图片
-                setImg(position);
+                if (TextUtils.isEmpty(dirAbsolutePath)) {
+                    //文件夹路径为空，加载网络图片
+                    setImgFromUrl(position);
+                } else {
+                    setImgFromDir(position);
+                }
                 index = position;
             }
         });
@@ -58,7 +66,14 @@ public class RecyclerGalleryActivity extends BaseActivity{
             @Override
             public void onChange(View view, int position) {
                 //设置大图片
-                setImg(position);
+                if (TextUtils.isEmpty(dirAbsolutePath)) {
+                    //文件夹路径为空，加载网络图片
+                    setImgFromUrl(position);
+                } else {
+                    setImgFromDir(position);
+                }
+                //改变当前位置索引
+                index = position;
             }
         });
 
@@ -69,6 +84,7 @@ public class RecyclerGalleryActivity extends BaseActivity{
                 Intent intent = new Intent(RecyclerGalleryActivity.this, GalleryActivity.class);
                 intent.putStringArrayListExtra("images", images);
                 intent.putExtra("position", index);
+                intent.putExtra("imgDirAbsolutePath", dirAbsolutePath);
                 startActivity(intent);
             }
         });
@@ -85,8 +101,9 @@ public class RecyclerGalleryActivity extends BaseActivity{
         Intent intent = getIntent();
         images = intent.getStringArrayListExtra("images");
         index = intent.getIntExtra("position", 0);
+        dirAbsolutePath = intent.getStringExtra("imgDirAbsolutePath");
 
-        Log.d(TAG, "initData: images + position===" + index + images.toString());
+        Log.d(TAG, "initData: images + position===" + index + images.toString() + "\n");
     }
 
     /**
@@ -99,13 +116,30 @@ public class RecyclerGalleryActivity extends BaseActivity{
         linearLayoutManager.scrollToPositionWithOffset(index, 0);
         recyclerView.setLayoutManager(linearLayoutManager);
         //设置适配器
-        adapter = new RecyclerGalleryAdapter(this, images);
+        adapter = new RecyclerGalleryAdapter(this, images, dirAbsolutePath);
         recyclerView.setAdapter(adapter);
     }
 
-    private void setImg(int position) {
+    /**
+     * 从网络url获取路径
+     * @param position
+     */
+    private void setImgFromUrl(int position) {
         Glide.with(RecyclerGalleryActivity.this)
                 .load(images.get(position))
+                .error(R.mipmap.turn_right)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .thumbnail(1)
+                .into(img);
+    }
+
+    /**
+     * 从本地获取路径
+     * @param position
+     */
+    private void setImgFromDir(int position) {
+        Glide.with(RecyclerGalleryActivity.this)
+                .load(new File(dirAbsolutePath + "/" +  images.get(position)))
                 .error(R.mipmap.turn_right)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .thumbnail(1)

@@ -6,10 +6,12 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,11 +24,14 @@ import com.buaa.yyg.baidupager.utils.UIUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * Viewpager画廊效果
@@ -43,6 +48,8 @@ public class GalleryActivity extends Activity implements View.OnClickListener{
     private static final String TAG = "GalleryActivity";
     //画廊
     private ViewPager myFullViewPager;
+    private String dirAbsolutePath;
+    private LinearLayout ll_download_image;
 
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
@@ -52,7 +59,8 @@ public class GalleryActivity extends Activity implements View.OnClickListener{
                     myFullViewPager.setCurrentItem(index);
                     break;
                 case SET_BITMAP_RESOURCE:
-                    setWallPage();
+                    setWallPage(bmp);
+                    downloadImage();
                     break;
                 default:
                     break;
@@ -74,7 +82,9 @@ public class GalleryActivity extends Activity implements View.OnClickListener{
     private void initView() {
         //初始化viewpager
         myFullViewPager = (ViewPager) findViewById(R.id.myFullViewPager);
+        //设置壁纸
         ll_tv_setwallpager = (LinearLayout) findViewById(R.id.ll_tv_setwallpager);
+        ll_download_image = (LinearLayout) findViewById(R.id.ll_download_image);
     }
 
     private void initData() {
@@ -82,6 +92,7 @@ public class GalleryActivity extends Activity implements View.OnClickListener{
         Intent intent = getIntent();
         images = intent.getStringArrayListExtra("images");
         index = intent.getIntExtra("position", 0);
+        dirAbsolutePath = intent.getStringExtra("imgDirAbsolutePath");
 
         Log.d(TAG, "initData: images + position===" + index + images.toString());
 
@@ -92,6 +103,8 @@ public class GalleryActivity extends Activity implements View.OnClickListener{
 
     private void initListener() {
         ll_tv_setwallpager.setOnClickListener(this);
+        ll_download_image.setOnClickListener(this);
+
         myFullViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
             @Override
@@ -119,10 +132,32 @@ public class GalleryActivity extends Activity implements View.OnClickListener{
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ll_tv_setwallpager:
-                //点击设置壁纸，下载图片到bitmap中
-                getURLImage(images.get( getCurrentItem() ));
+                //点击设置壁纸
+                if (TextUtils.isEmpty(dirAbsolutePath)) {
+                    //文件夹路径为空，下载图片到bitmap中
+                    getURLImage(images.get( getCurrentItem() ));
+                } else {
+                    getLocalImage(dirAbsolutePath + "/" +  images.get( getCurrentItem() ));
+                }
                 UIUtils.showToast(this, "壁纸设置成功");
                 break;
+
+            case R.id.ll_download_image:
+                //点击下载
+                if (TextUtils.isEmpty(dirAbsolutePath)) {
+                    //文件路径为空，是网络图片
+                    //判断内部存储卡存不存在,如果不存在，无法读写
+                    if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                        UIUtils.showToast(GalleryActivity.this, "内部存储卡不存在");
+                        return;
+                    }
+                    //先下载图片到bitmap中
+                    getURLImage(images.get( getCurrentItem() ));
+
+                } else {
+                    //是本地图片
+                    UIUtils.showToast(GalleryActivity.this, "已经是本地图片，无需下载");
+                }
             default:
                 break;
         }
@@ -136,13 +171,30 @@ public class GalleryActivity extends Activity implements View.OnClickListener{
         return myFullViewPager.getCurrentItem();
     }
 
+    private void downloadImage() {
+        try {
+            File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/ddWallPager/images/");
+            String fileName = UUID.randomUUID().toString();
+            File file = new File(dir + fileName + ".jpg");
+            dir.mkdirs();
+            file.createNewFile();
+            FileOutputStream out = new FileOutputStream(file);
+            bmp.compress(Bitmap.CompressFormat.JPEG, 80, out);
+            out.flush();
+            out.close();
+            UIUtils.showToast(GalleryActivity.this, "下载完成");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * 设置壁纸,在handler中调用
      */
-    private void setWallPage() {
+    private void setWallPage(Bitmap bitmap) {
         WallpaperManager wallpaperManager = WallpaperManager.getInstance(this);
         try {
-            wallpaperManager.setBitmap(bmp);
+            wallpaperManager.setBitmap(bitmap);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -182,6 +234,14 @@ public class GalleryActivity extends Activity implements View.OnClickListener{
     }
 
     /**
+     * 设置本地图片为壁纸
+     */
+    private void getLocalImage(String filePath) {
+        Bitmap bitmap = BitmapFactory.decodeFile(filePath);
+        setWallPage(bitmap);
+    }
+
+    /**
      * PagerAdapter
      */
     private class MyAdapter extends PagerAdapter {
@@ -213,14 +273,41 @@ public class GalleryActivity extends Activity implements View.OnClickListener{
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             container.addView(imageView);
 
+            if (TextUtils.isEmpty(dirAbsolutePath)) {
+                //文件夹路径为空，加载网络图片
+                setImgFromUrl(position, imageView);
+            } else {
+                setImgFromDir(position, imageView);
+            }
+            return imageView;
+        }
+
+        /**
+         * 从网络url获取路径
+         * @param position
+         */
+        private void setImgFromUrl(int position, ImageView imageView) {
             Glide.with(GalleryActivity.this)
                     .load(images.get(position))
-//                    .placeholder(R.mipmap.turn_right)
+                    //                    .placeholder(R.mipmap.turn_right)
                     .error(R.mipmap.turn_right)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .thumbnail(1)
                     .into(imageView);
-            return imageView;
+        }
+
+        /**
+         * 从本地获取路径
+         * @param position
+         */
+        private void setImgFromDir(int position, ImageView imageView) {
+            Glide.with(GalleryActivity.this)
+                    .load(new File(dirAbsolutePath + "/" +  images.get(position)))
+                    //                    .placeholder(R.mipmap.turn_right)
+                    .error(R.mipmap.turn_right)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .thumbnail(1)
+                    .into(imageView);
         }
     }
 }
