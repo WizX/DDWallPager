@@ -40,7 +40,8 @@ import java.util.UUID;
 public class GalleryActivity extends Activity implements View.OnClickListener{
 
     private static final int SET_CURRENT_ITEM = 0;
-    private static final int SET_BITMAP_RESOURCE = 1;
+    private static final int SET_WALL_PAGER = 1;
+    private static final int DOWNLOAD_IMAGE = 2;
     private ArrayList<String> images = new ArrayList<>();
     private int index;
     Bitmap bmp = null;
@@ -58,8 +59,10 @@ public class GalleryActivity extends Activity implements View.OnClickListener{
                 case SET_CURRENT_ITEM:
                     myFullViewPager.setCurrentItem(index);
                     break;
-                case SET_BITMAP_RESOURCE:
+                case SET_WALL_PAGER:
                     setWallPage(bmp);
+                    break;
+                case DOWNLOAD_IMAGE:
                     downloadImage();
                     break;
                 default:
@@ -135,7 +138,7 @@ public class GalleryActivity extends Activity implements View.OnClickListener{
                 //点击设置壁纸
                 if (TextUtils.isEmpty(dirAbsolutePath)) {
                     //文件夹路径为空，下载图片到bitmap中
-                    getURLImage(images.get( getCurrentItem() ));
+                    getURLImage(images.get( getCurrentItem()), SET_WALL_PAGER);
                 } else {
                     getLocalImage(dirAbsolutePath + "/" +  images.get( getCurrentItem() ));
                 }
@@ -152,8 +155,7 @@ public class GalleryActivity extends Activity implements View.OnClickListener{
                         return;
                     }
                     //先下载图片到bitmap中
-                    getURLImage(images.get( getCurrentItem() ));
-
+                    getURLImage(images.get( getCurrentItem()), DOWNLOAD_IMAGE);
                 } else {
                     //是本地图片
                     UIUtils.showToast(GalleryActivity.this, "已经是本地图片，无需下载");
@@ -171,13 +173,18 @@ public class GalleryActivity extends Activity implements View.OnClickListener{
         return myFullViewPager.getCurrentItem();
     }
 
+    /**
+     * 下载壁纸到本地
+     */
     private void downloadImage() {
         try {
-            File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/ddWallPager/images/");
+            File dirFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/DDWallPager/images/");
+            if (!dirFile.exists()) {
+                dirFile.mkdirs();
+            }
+            String dir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/DDWallPager/images/";
             String fileName = UUID.randomUUID().toString();
             File file = new File(dir + fileName + ".jpg");
-            dir.mkdirs();
-            file.createNewFile();
             FileOutputStream out = new FileOutputStream(file);
             bmp.compress(Bitmap.CompressFormat.JPEG, 80, out);
             out.flush();
@@ -204,7 +211,7 @@ public class GalleryActivity extends Activity implements View.OnClickListener{
      * 点击设置壁纸，下载图片到bitmap中，通过handler通知下载好了
      * @param url
      */
-    public void getURLImage(final String url) {
+    public void getURLImage(final String url, final int type) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -220,7 +227,7 @@ public class GalleryActivity extends Activity implements View.OnClickListener{
                     if(code == 200) {
                         InputStream is = conn.getInputStream();//获得图片的数据流
                         bmp = BitmapFactory.decodeStream(is);
-                        message.what = SET_BITMAP_RESOURCE;
+                        message.what = type;
                         handler.sendMessage(message);
                         is.close();
                     } else {
