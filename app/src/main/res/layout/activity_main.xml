@@ -11,13 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.buaa.yyg.baidupager.view.ParentViewPager
+        <com.buaa.yyg.ddpager.view.ParentViewPager
             android:id="@+id/myViewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/myBottomLayout" />
 
-        <com.buaa.yyg.baidupager.view.MyBottomLayout
+        <com.buaa.yyg.ddpager.view.MyBottomLayout
             android:id="@+id/myBottomLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

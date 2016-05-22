@@ -4,7 +4,7 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <com.buaa.yyg.baidupager.view.PullScrollView
+    <com.buaa.yyg.ddpager.view.PullScrollView
         android:id="@+id/pull_scroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -41,7 +41,7 @@
 
             </RelativeLayout>
 
-            <com.buaa.yyg.baidupager.view.DisGridView
+            <com.buaa.yyg.ddpager.view.DisGridView
                 android:horizontalSpacing="5dp"
                 android:verticalSpacing="4dp"
                 android:numColumns="3"
@@ -75,5 +75,5 @@
 
             </RelativeLayout>
         </LinearLayout>
-    </com.buaa.yyg.baidupager.view.PullScrollView>
+    </com.buaa.yyg.ddpager.view.PullScrollView>
 </LinearLayout>
