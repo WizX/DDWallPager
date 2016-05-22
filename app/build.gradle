@@ -5,7 +5,7 @@ android {
     buildToolsVersion "24.0.0 rc2"
 
     defaultConfig {
-        applicationId "com.buaa.yyg.baidupager"
+        applicationId "com.buaa.yyg.ddpager"
         minSdkVersion 15
         targetSdkVersion 23
         versionCode 1
